@@ -53,6 +53,8 @@ class ReportGenerator:
         for r in self.entry_reports:
             if not r.comparison:
                 error += 1
+            elif (r.comparison.issues or []) and "author_mismatch" in r.comparison.issues:
+                error += 1
             elif r.comparison.is_match:
                 verified += 1
             elif r.comparison.match_probability >= 0.3:
@@ -85,7 +87,10 @@ class ReportGenerator:
                     "authors": comp.best_hit.fetched_authors,
                     "year": comp.best_hit.fetched_year,
                 }
-            status = "verified" if (comp and comp.is_match) else ("warning" if (comp and comp.match_probability >= 0.3) else "error")
+            if comp and (comp.issues or []) and "author_mismatch" in comp.issues:
+                status = "error"
+            else:
+                status = "verified" if (comp and comp.is_match) else ("warning" if (comp and comp.match_probability >= 0.3) else "error")
             entries_out.append({
                 "key": er.entry.key,
                 "status": status,
@@ -138,7 +143,8 @@ class ReportGenerator:
             if not er.comparison or er.comparison.is_match:
                 continue
             comp = er.comparison
-            lines.append(f"### {er.entry.key} ({'warning' if comp.match_probability >= 0.3 else 'error'})")
+            status_label = "error" if ((comp.issues or []) and "author_mismatch" in comp.issues) or comp.match_probability < 0.3 else "warning"
+            lines.append(f"### {er.entry.key} ({status_label})")
             lines.append(f"- 最佳候选: {comp.source} (P={comp.match_probability:.2f})")
             lines.append(f"- 问题: {', '.join(comp.issues)}")
             if comp.best_hit and comp.best_hit.fetched_bibtex:
