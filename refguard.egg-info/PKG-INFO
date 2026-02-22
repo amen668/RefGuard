@@ -1,0 +1,57 @@
+Metadata-Version: 2.4
+Name: refguard
+Version: 0.1.0
+Summary: Reference Integrity & Citation Quality Checker (source-aware evidence fusion)
+Author: RefGuard Contributors
+License: GPL-3.0-or-later
+Keywords: bibliography,citation,bibtex,verification,academic
+Classifier: Development Status :: 3 - Alpha
+Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: NOTICE
+Requires-Dist: bibtexparser>=1.4
+Requires-Dist: cachetools>=5.3
+Requires-Dist: fastapi>=0.104
+Requires-Dist: pydantic>=2.0
+Requires-Dist: pydantic-settings>=2.0
+Requires-Dist: PyYAML>=6.0
+Requires-Dist: requests>=2.28
+Requires-Dist: scikit-learn>=1.3
+Requires-Dist: Unidecode>=1.3
+Requires-Dist: uvicorn[standard]>=0.24
+Provides-Extra: dev
+Requires-Dist: pytest>=7; extra == "dev"
+Requires-Dist: pytest-cov>=4; extra == "dev"
+Requires-Dist: ruff>=0.1; extra == "dev"
+Dynamic: license-file
+
+# RefGuard
+
+Reference Integrity & Citation Quality Checker — 面向数据源的证据融合（source-aware evidence fusion）一体化工具。
+
+- **Mode A**：Bib-only，参考文献存在性与元数据一致性检查。
+- **Mode B**：Bib+TeX，引用用法检查与可选 LLM 相关性评估。
+
+核心方法：多源候选生成 → 特征化 → 证据融合器输出 P(match) → 概率阈值决策；LLM 仅用于语义相关性，不参与存在性判定。
+
+- Python 3.11+
+- 部署：Docker，Linux x86_64
+- 接口：HTTP API + CLI (`refcheck`)
+
+## 快速开始
+
+```bash
+# CLI Mode A
+refcheck verify bib --input ./refs.bib --profile strict --out ./report/
+
+# CLI Mode B
+refcheck verify project --bib ./paper/references.bib --tex ./paper/main.tex --check-usage on --out ./report/
+```
+
+## 许可证
+
+GPL-3.0-or-later。详见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。

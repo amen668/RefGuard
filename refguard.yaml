@@ -1,0 +1,35 @@
+# RefGuard config (refguard.yaml)
+files:
+  bib: ""
+  tex: []
+  input_dir: ""
+  output_dir: "./report"
+
+bibliography:
+  check_duplicates: true
+  check_usage: true
+  check_relevance: false
+  export_only_used_bib: false
+  check_preprint_ratio: false
+
+options:
+  profile: balanced
+  sources:
+    - crossref
+    - openalex
+    - arxiv
+    - dblp
+    - semanticscholar
+  top_k_candidates: 8
+  stop_on_confidence: 0.98
+  match_threshold: 0.85
+  gap_threshold: 0.05
+
+llm:
+  enabled: false
+  backend: dashscope
+  model: qwen-turbo
+
+output:
+  quiet: false
+  minimal_verified: false
