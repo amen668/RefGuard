@@ -55,6 +55,15 @@ def decide(
         confidence = p1
         if p1 <= 0.3:
             issues.append("low_confidence")
+    # Override: author/DOI mismatch -> likely hallucinated citation
+    if explanations:
+        author_sim = explanations.get("author_sim")
+        doi_match = explanations.get("doi_match")
+        if author_sim is not None and (author_sim < 0.2) and (doi_match == 0 or doi_match is None):
+            status = "error"
+            is_match = False
+            if "author_mismatch" not in issues:
+                issues.append("author_mismatch")
     # Field-level for report
     title_match = getattr(best_hit, "_title_match", None)
     author_match = getattr(best_hit, "_author_match", None)
