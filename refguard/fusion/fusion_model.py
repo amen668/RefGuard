@@ -13,7 +13,7 @@ from refguard.fusion.feature_builder import FeatureBuilder, FEATURE_NAMES
 DEFAULT_WEIGHTS = [
     0.25, 0.2, 0.1, 0.2, 0.15, 0.05, 0.02, 0.0, 0.0, 0.0, 0.01, 0.01, 0.0, 0.0,
 ]
-DEFAULT_BIAS = -1.5
+DEFAULT_BIAS = 1.0
 
 
 class FusionModel:
