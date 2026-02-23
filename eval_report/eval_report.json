@@ -1,0 +1,125 @@
+{
+  "summary": {
+    "total": 10,
+    "accuracy": 1.0,
+    "precision_hallucination": 1.0,
+    "recall_hallucination": 1.0,
+    "f1_hallucination": 1.0,
+    "confusion": {
+      "TP": 10,
+      "TN": 0,
+      "FP": 0,
+      "FN": 0
+    },
+    "profile": "balanced",
+    "sources": [
+      "crossref",
+      "openalex",
+      "arxiv",
+      "dblp",
+      "semanticscholar"
+    ]
+  },
+  "results": [
+    {
+      "index": 0,
+      "paper_id": "FxCy8TvQHO",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.7948562861449444,
+      "correct": true
+    },
+    {
+      "index": 1,
+      "paper_id": "WQb0YrFl3H",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.7766479781925132,
+      "correct": true
+    },
+    {
+      "index": 2,
+      "paper_id": "WQb0YrFl3H",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.7770965850590508,
+      "correct": true
+    },
+    {
+      "index": 3,
+      "paper_id": "EyOtIOmMUh",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.7630454017565661,
+      "correct": true
+    },
+    {
+      "index": 4,
+      "paper_id": "EyOtIOmMUh",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.763596605159627,
+      "correct": true
+    },
+    {
+      "index": 5,
+      "paper_id": "IiEtQPGVyV",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.750660181740822,
+      "correct": true
+    },
+    {
+      "index": 6,
+      "paper_id": "IiEtQPGVyV",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "warning",
+      "refguard_is_match": false,
+      "match_probability": 0.770028345125288,
+      "correct": true
+    },
+    {
+      "index": 7,
+      "paper_id": "IiEtQPGVyV",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.7508120741025498,
+      "correct": true
+    },
+    {
+      "index": 8,
+      "paper_id": "IiEtQPGVyV",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.7750012268604423,
+      "correct": true
+    },
+    {
+      "index": 9,
+      "paper_id": "IiEtQPGVyV",
+      "ground_truth_hallucinated": true,
+      "predicted_hallucinated": true,
+      "refguard_status": "error",
+      "refguard_is_match": false,
+      "match_probability": 0.756913812855636,
+      "correct": true
+    }
+  ]
+}
