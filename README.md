@@ -95,7 +95,7 @@ curl -X POST "http://127.0.0.1:8000/api/v1/verify/bib" \
 
 `data/` 目录用于放置小样例和可复现实验记录。当前项目数据来自公开来源和公开元数据。请将其视为研究数据：只保留书目信息、标签与来源说明。不要提交论文全文、用户上传文件、非公开数据源导出、API key 或 cookie。正式公开完整数据集前，请单独附数据说明和许可核查结果。
 
-运行基准测试辅助脚本：
+运行基准测试辅助脚本。输出目录默认为 `eval_report/`，该目录是生成产物，不纳入版本库：
 
 ```bash
 python eval/run_benchmark.py --input data/refguard_input.jsonl --out eval_report

@@ -36,6 +36,8 @@ ENV/
 # 日志与报告输出
 logs/
 report/
+eval_report/
+tmp_eval_check/
 *.log
 
 # 测试与覆盖率
