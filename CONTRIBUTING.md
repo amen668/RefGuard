@@ -1,22 +1,23 @@
-# Contributing
+# 贡献指南
 
-Thanks for helping improve RefGuard.
+感谢你帮助改进 RefGuard。
 
-## Development Setup
+## 开发环境
 
 ```bash
 pip install -e ".[dev]"
 python -m unittest discover tests
 ```
 
-## Pull Request Guidelines
+## Pull Request 要求
 
-- Keep reference identity verification independent from LLM output.
-- Use only public, documented data sources.
-- Do not add CNKI, Google Scholar scraping, browser automation, or credentials.
-- Add tests for parser, feature, fusion, or API behavior when changing core logic.
-- Avoid committing large generated reports, caches, local `.env` files, or private datasets.
+- 参考文献身份核验必须独立于 LLM 输出。
+- 只使用公开、可文档化的数据源。
+- 不添加 Google Scholar 抓取、浏览器自动化、账号凭据或非公开数据源。
+- 不提交任何来自雇主、客户、合作方或私人用户的内部资料。
+- 修改解析、特征、融合、API 等核心逻辑时，请补充测试。
+- 不提交大型生成报告、缓存、本地 `.env` 文件或私人数据集。
 
-## Data Contributions
+## 数据贡献
 
-Benchmark data should contain redistributable bibliographic metadata and explicit provenance. Synthetic hallucinated references are welcome when their construction method is documented.
+基准数据应只包含公开来源的书目信息，并写清来源、许可和处理方式。欢迎提交合成幻觉参考文献样本，但需要说明构造方法。

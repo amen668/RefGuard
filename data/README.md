@@ -1,19 +1,21 @@
-# Data
+# 数据目录
 
-This directory is for small public samples and reproducible benchmark records.
+本目录用于放置小规模公开样例和可复现实验记录。当前项目数据来自公开来源和公开元数据。
 
-Allowed content:
+公开可访问不等于自动可再分发。用于论文附件、公开 release 或第三方复用前，请逐项核查来源许可、API 条款和引用要求。
 
-- Bibliographic metadata such as title, authors, year, venue, DOI, arXiv ID, and URL.
-- Labels and notes that you own or can redistribute.
-- Provenance fields for public sources.
+可以提交：
 
-Do not commit:
+- 题名、作者、年份、期刊/会议、DOI、arXiv ID、URL 等公开书目信息。
+- 项目自行标注或允许再分发的标签与说明。
+- 公开来源的 provenance 字段。
 
-- API keys, access tokens, cookies, or private credentials.
-- User-uploaded manuscripts or full-text papers.
-- Proprietary database exports.
-- CNKI data or scraper output.
-- Large raw datasets that do not have a clear redistribution license.
+不要提交：
 
-The included `refguard_input.jsonl` file is intended as a benchmark-style input file. Review its provenance and license before using it in a paper artifact or public release.
+- API key、access token、cookie 或其他私人凭据。
+- 用户上传的论文原文或全文论文。
+- 非公开数据源导出。
+- 需要登录、授权、cookie 或工作账号才能访问的数据源内容。
+- 没有明确再分发许可的大型原始数据集。
+
+当前的 `refguard_input.jsonl` 用作基准测试风格输入。正式用于论文附件或公开 release 之前，请再次核查其来源、许可和可再分发性。

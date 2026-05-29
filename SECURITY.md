@@ -1,15 +1,15 @@
-# Security Policy
+# 安全说明
 
-## Supported Versions
+## 支持版本
 
-RefGuard is currently pre-1.0. Security fixes are applied to the main branch.
+RefGuard 当前仍处于 1.0 之前的早期阶段。安全修复会优先应用到 `main` 分支。
 
-## Reporting a Vulnerability
+## 报告安全问题
 
-Please report suspected vulnerabilities privately to the maintainers before opening a public issue.
+如果发现疑似安全问题，请先私下联系维护者，不要直接公开包含细节的 issue。
 
-Do not include API keys, private manuscripts, cookies, or proprietary database exports in bug reports. When possible, use a minimal synthetic BibTeX example.
+报告问题时不要附带 API key、私人论文、cookie 或闭源数据库导出。可以的话，请使用最小化的合成 BibTeX 示例复现问题。
 
-## Secrets
+## 密钥管理
 
-RefGuard should never require committed credentials. Keep local provider keys in `.env`, environment variables, or your deployment secret manager.
+RefGuard 不需要把凭据提交进仓库。请将本地 provider key 放在 `.env`、环境变量或部署平台的 secret manager 中。

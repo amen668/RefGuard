@@ -1,15 +1,11 @@
-RefGuard - Reference Integrity & Citation Quality Checker
+RefGuard - 参考文献真实性与引用质量检查工具
 
 Copyright (c) 2026 RefGuard contributors.
 
-RefGuard verifies bibliography metadata against public scholarly sources and
-produces evidence-based reports. Reference identity decisions are based on
-metadata matching and evidence fusion, not on LLM output.
+RefGuard 基于公开学术元数据源核验参考文献，并生成证据报告。参考文献身份判定基于元数据匹配和多源证据融合，不基于 LLM 输出。
 
-Optional LLM relevance checks may send citation context and bibliographic
-metadata to the provider configured by the user. They are disabled by default.
-Do not commit provider API keys or private documents.
+RefGuard 是个人研究与开源项目，不代表作者任职机构、任何数据平台或商业服务。本项目不使用雇主资源、内部资料、非公开数据、账号凭据或工作产出。
 
-Public data sources used by RefGuard may include Crossref, OpenAlex, arXiv,
-DBLP, and Semantic Scholar. Users are responsible for complying with each
-source's terms of use and rate limits.
+可选的 LLM 相关性检查可能会把引用上下文和书目信息发送给用户配置的 provider。该功能默认关闭。请勿提交 provider API key 或私人文档。
+
+RefGuard 使用的公开数据源可包括 Crossref、OpenAlex、arXiv、DBLP 和 Semantic Scholar。使用者应遵守各数据源的服务条款和请求频率限制。
