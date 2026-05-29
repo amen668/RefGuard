@@ -2,7 +2,7 @@
 
 RefGuard 是一个面向学术参考文献的开源核验工具，用于检查 BibTeX 条目是否能被公开学术元数据源支持。
 
-项目关注“参考文献身份核验”：题名、作者、年份、DOI、arXiv ID 与来源证据。可选的 LLM 相关性检查被单独隔离，默认关闭，不参与文献真实性判定。
+项目关注“参考文献身份核验”：题名、作者、年份、DOI、arXiv ID 与来源证据。当前方法不使用 LLM。
 
 ## 功能
 
@@ -17,7 +17,7 @@ RefGuard 是一个面向学术参考文献的开源核验工具，用于检查 B
 
 - 默认只接入公开、可文档化的学术元数据源。
 - 不抓取 Google Scholar。
-- 不依赖私有 LLM 判断参考文献是否真实存在。
+- 不使用 LLM 判断参考文献是否真实存在。
 - 不包含用户上传论文或私人项目数据。
 
 ## 合规与职业边界
@@ -85,12 +85,11 @@ curl -X POST "http://127.0.0.1:8000/api/v1/verify/bib" \
 
 只有需要本地覆盖配置时，才将 `.env.example` 复制为 `.env`。
 
-所有 API key 都是可选项，不应提交到版本库：
+所有 API key 都是可选项，仅用于公开元数据源的访问限额，不应提交到版本库：
 
 - `SEMANTIC_SCHOLAR_API_KEY`：可选，用于提高请求限额。
 - `OPENALEX_API_KEY`：可选。
 - `CROSSREF_MAILTO`：可选，用于 Crossref polite pool。
-- `OPENAI_API_KEY` / `DASHSCOPE_API_KEY`：仅用于可选相关性检查，不用于文献身份核验。
 
 ## 实验数据
 

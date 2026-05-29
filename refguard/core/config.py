@@ -48,10 +48,6 @@ class Settings(BaseSettings):
     openalex_api_key: str | None = Field(default=None, description="OpenAlex API key, optional")
     crossref_mailto: str = Field(default="", description="Crossref polite pool email")
 
-    # Optional LLM relevance checks. These are never used for identity decisions.
-    dashscope_api_key: str | None = Field(default=None, alias="DASHSCOPE_API_KEY")
-    openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
-
     refguard_telemetry: bool = Field(default=False, alias="REFGUARD_TELEMETRY")
 
     @property

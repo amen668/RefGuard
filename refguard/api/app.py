@@ -22,8 +22,6 @@ def create_app() -> FastAPI:
 class VerifyBibOptions(BaseModel):
     check_duplicates: bool = True
     top_k_candidates: int = 8
-    stop_on_confidence: float = 0.98
-    llm: dict = Field(default_factory=lambda: {"enabled": False})
 
 
 class VerifyBibRequest(BaseModel):

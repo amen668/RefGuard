@@ -1,4 +1,4 @@
-"""BibEntry: unified bibliography entry model (extended from CiteScan)."""
+"""BibEntry: unified bibliography entry model."""
 from dataclasses import dataclass, field
 from typing import Optional
 

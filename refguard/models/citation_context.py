@@ -1,11 +1,11 @@
-"""CitationContext: citation location and context (from BibGuard)."""
+"""CitationContext: citation location and context."""
 from dataclasses import dataclass
 from typing import Optional
 
 
 @dataclass
 class CitationContext:
-    """Citation with its context for Mode B / LLM relevance."""
+    """Citation with its context for Mode B usage checks."""
     key: str
     line_number: int
     command: str

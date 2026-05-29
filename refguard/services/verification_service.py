@@ -1,4 +1,4 @@
-"""VerificationService: Bib-only and Bib+TeX orchestration (Route C)."""
+"""VerificationService: Bib-only and Bib+TeX orchestration."""
 from typing import List, Optional
 
 from refguard.parsers import BibParser, TexParser
@@ -21,18 +21,15 @@ class VerificationService:
         sources: Optional[List[str]] = None,
         profile_name: str = "balanced",
         top_k: int = 8,
-        stop_on_confidence: Optional[float] = None,
         model_dir: Optional[str] = None,
     ) -> None:
         workflow = WorkflowConfig(sources=sources or [])
         self.sources = workflow.get_enabled_sources()
         self.profile = get_profile(profile_name)
         self.top_k = top_k if top_k is not None else self.profile.top_k
-        self.stop_on_confidence = stop_on_confidence or self.profile.stop_on_confidence
         self.candidate_generator = CandidateGenerator(
             sources=self.sources,
             top_k=self.top_k,
-            stop_on_confidence=self.stop_on_confidence,
         )
         self.fusion_model = FusionModel(model_dir=model_dir)
         self.profile_name = profile_name
@@ -57,7 +54,6 @@ class VerificationService:
                 profile=self.profile_name,
                 sources=self.sources,
                 top_k_candidates=self.top_k,
-                stop_on_confidence=self.stop_on_confidence,
                 match_threshold=self.profile.match_threshold,
                 gap_threshold=self.profile.gap_threshold,
             )

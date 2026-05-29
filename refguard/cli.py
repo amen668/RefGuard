@@ -1,4 +1,4 @@
-"""CLI entry point: refcheck verify bib | verify project | fusion train."""
+"""CLI entry point: refguard verify bib | verify project."""
 import argparse
 from pathlib import Path
 
@@ -22,26 +22,15 @@ def main() -> None:
     proj_p.add_argument("--bib", "-b", required=True, help="Path to .bib file")
     proj_p.add_argument("--tex", "-t", action="append", default=[], help="Path(s) to .tex file(s)")
     proj_p.add_argument("--check-usage", default="on", choices=["on", "off"])
-    proj_p.add_argument("--check-relevance", default="off", choices=["on", "off"])
     proj_p.add_argument("--export-only-used-bib", action="store_true", help="Output only_used.bib")
     proj_p.add_argument("--profile", "-p", default="balanced", choices=["strict", "balanced", "lenient"])
     proj_p.add_argument("--out", "-o", default="./report", help="Output directory")
-    # fusion train
-    fusion = sub.add_parser("fusion", help="Fusion model")
-    fusion_sub = fusion.add_subparsers(dest="subcommand", required=True)
-    train_p = fusion_sub.add_parser("train", help="Train fusion model (offline)")
-    train_p.add_argument("--dataset", required=True, help="Path to labeled_matches.jsonl")
-    train_p.add_argument("--model", default="logistic", choices=["logistic"])
-    train_p.add_argument("--calibration", default="platt", choices=["platt", "isotonic"])
-    train_p.add_argument("--out", "-o", default="./models/fusion", help="Output model directory")
     args = parser.parse_args()
     if args.command == "verify":
         if args.subcommand == "bib":
             run_verify_bib(args)
         else:
             run_verify_project(args)
-    elif args.command == "fusion" and args.subcommand == "train":
-        run_fusion_train(args)
     else:
         parser.print_help()
 
@@ -60,7 +49,6 @@ def run_verify_bib(args) -> None:
     report.write_json(out_dir / "report.json")
     report.write_markdown(out_dir / "report.md")
     print(f"Report written to {out_dir}")
-
 
 def run_verify_project(args) -> None:
     from refguard.services import VerificationService
@@ -84,16 +72,3 @@ def run_verify_project(args) -> None:
         used = svc.tex_parser.get_all_cited_keys()
         report.write_only_used_bib(out_dir / "only_used.bib", svc.bib_parser.entries, used)
     print(f"Report written to {out_dir}")
-
-
-def run_fusion_train(args) -> None:
-    from refguard.core import setup_logging
-    setup_logging()
-    Path(args.out).mkdir(parents=True, exist_ok=True)
-    # Stub: write default weights so fusion model can load them
-    import json
-    from refguard.fusion.feature_builder import FEATURE_NAMES
-    from refguard.fusion.fusion_model import DEFAULT_WEIGHTS, DEFAULT_BIAS
-    with open(Path(args.out) / "fusion_model.json", "w") as f:
-        json.dump({"weights": DEFAULT_WEIGHTS, "bias": DEFAULT_BIAS, "feature_names": FEATURE_NAMES}, f, indent=2)
-    print(f"Default fusion model config written to {args.out} (full training script in eval/)")

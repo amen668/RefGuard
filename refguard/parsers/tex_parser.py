@@ -1,4 +1,4 @@
-"""LaTeX parser for citation extraction (from BibGuard)."""
+"""LaTeX parser for citation extraction."""
 import re
 from pathlib import Path
 from typing import Optional

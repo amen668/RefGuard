@@ -1,4 +1,4 @@
-"""Text normalization for comparison (from CiteScan)."""
+"""Text normalization for comparison."""
 import re
 import unicodedata
 from unidecode import unidecode

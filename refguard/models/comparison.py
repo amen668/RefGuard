@@ -13,7 +13,6 @@ class ComparisonResult:
     confidence: float
     issues: list[str]
     source: str
-    # Extended for Route C
     match_probability: float = 0.0
     decision_profile: str = ""
     best_hit: Optional[SourceHit] = None
@@ -34,7 +33,6 @@ class ComparisonResult:
     fetched_doi: Optional[str] = None
     fetched_url: str = ""
     fetched_bibtex: str = ""
-    stopped_early: bool = False  # stop_on_confidence
 
     @property
     def has_issues(self) -> bool:

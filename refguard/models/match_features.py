@@ -1,4 +1,4 @@
-"""MatchFeatures: feature vector for evidence fusion (Route C)."""
+"""MatchFeatures: feature vector for evidence fusion."""
 from dataclasses import dataclass, field
 from typing import Any
 

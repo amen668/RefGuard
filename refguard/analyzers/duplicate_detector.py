@@ -1,4 +1,4 @@
-"""Duplicate entry detector (from CiteScan)."""
+"""Duplicate entry detector."""
 from dataclasses import dataclass
 from typing import List, Tuple
 

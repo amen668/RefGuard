@@ -12,11 +12,9 @@ class RunMetadata:
     profile: str = ""
     sources: list[str] = field(default_factory=list)
     top_k_candidates: int = 5
-    stop_on_confidence: float = 0.995
     match_threshold: float = 0.95
     gap_threshold: float = 0.05
     version: str = ""
-    config_snapshot: Optional[dict[str, Any]] = None
 
 
 @dataclass
@@ -30,11 +28,10 @@ class UsageResult:
 
 @dataclass
 class EntryReport:
-    """Single entry report: entry + comparison + optional usage/evaluations."""
+    """Single entry report: entry + comparison + optional usage."""
     entry: BibEntry
     comparison: Optional[ComparisonResult] = None
     usage: Optional[UsageResult] = None
-    evaluations: list[Any] = field(default_factory=list)
 
 
 @dataclass
@@ -46,4 +43,3 @@ class ProjectReport:
     missing_citations: list[str] = field(default_factory=list)
     unused_entries: list[str] = field(default_factory=list)
     run_metadata: Optional[RunMetadata] = None
-    latex_issues: list[Any] = field(default_factory=list)

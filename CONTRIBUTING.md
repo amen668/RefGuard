@@ -11,7 +11,7 @@ python -m unittest discover tests
 
 ## Pull Request 要求
 
-- 参考文献身份核验必须独立于 LLM 输出。
+- 参考文献身份核验不得依赖 LLM 输出。
 - 只使用公开、可文档化的数据源。
 - 不添加 Google Scholar 抓取、浏览器自动化、账号凭据或非公开数据源。
 - 不提交任何来自雇主、客户、合作方或私人用户的内部资料。
