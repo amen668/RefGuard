@@ -57,7 +57,7 @@ class ArxivFetcher(BaseFetcher):
                 self.API_BASE,
                 params={"id_list": arxiv_id, "max_results": 1},
                 timeout=self._timeout,
-                headers={"User-Agent": "RefGuard/1.0 (mailto:refguard@localhost)"},
+                headers={"User-Agent": "RefGuard/1.0 (https://github.com/refguard/refguard)"},
             )
             r.raise_for_status()
             results = self._parse_response(r.text)
@@ -79,7 +79,7 @@ class ArxivFetcher(BaseFetcher):
                 self.API_BASE,
                 params={"search_query": q, "max_results": max_results, "sortBy": "relevance", "sortOrder": "descending"},
                 timeout=self._timeout,
-                headers={"User-Agent": "RefGuard/1.0 (mailto:refguard@localhost)"},
+                headers={"User-Agent": "RefGuard/1.0 (https://github.com/refguard/refguard)"},
             )
             r.raise_for_status()
             results = self._parse_response(r.text)

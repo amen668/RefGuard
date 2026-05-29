@@ -1,84 +1,112 @@
 # RefGuard
 
-Reference Integrity & Citation Quality Checker — 面向数据源的证据融合（source-aware evidence fusion）一体化工具。
+RefGuard is an open-source toolkit for checking whether bibliography entries are supported by public scholarly metadata sources.
 
-- **Mode A**：Bib-only，参考文献存在性与元数据一致性检查。
-- **Mode B**：Bib+TeX，引用用法检查与可选 LLM 相关性评估。
+It focuses on reference identity verification: title, author, year, DOI, arXiv ID, and source evidence. Optional LLM-based relevance checks are kept separate and are disabled by default.
 
-核心方法：多源候选生成 → 特征化 → 证据融合器输出 P(match) → 概率阈值决策；LLM 仅用于语义相关性，不参与存在性判定。
+## Features
 
-- Python 3.11+
-- 部署：Docker，Linux x86_64
-- 接口：HTTP API + CLI (`refcheck`)
+- Verify BibTeX references against Crossref, OpenAlex, arXiv, DBLP, and Semantic Scholar.
+- Fuse multi-source evidence into a match probability and a clear status.
+- Detect duplicate bibliography entries.
+- Check BibTeX usage against LaTeX citation keys.
+- Produce JSON and Markdown reports.
+- Run as a CLI tool or a FastAPI service.
 
-## 安装依赖
+## What RefGuard Does Not Do
 
-在项目根目录执行（注意是 `-r`，表示从文件安装）：
+- It does not use CNKI or any closed academic database.
+- It does not scrape Google Scholar.
+- It does not depend on private LLMs for reference identity decisions.
+- It does not include user-uploaded papers or private project data.
 
-```bash
-pip install -r requirements.txt
-```
-
-或安装为可编辑包（推荐，便于开发）：
+## Installation
 
 ```bash
 pip install -e .
 ```
 
-## 快速开始
-
-```bash
-# CLI Mode A
-refcheck verify bib --input ./refs.bib --profile strict --out ./report/
-
-# CLI Mode B
-refcheck verify project --bib ./paper/references.bib --tex ./paper/main.tex --check-usage on --out ./report/
-```
-
-## 如何测试
-
-### 1. API 测试（需先启动服务：`uvicorn main:app --reload`）
-
-- **接口文档**：浏览器打开 http://127.0.0.1:8000/docs 或 http://127.0.0.1:8000/redoc
-- **健康/状态**：GET http://127.0.0.1:8000/api/v1/sources/status（查看缓存与数据源列表）
-- **Bib 验证**：POST http://127.0.0.1:8000/api/v1/verify/bib，Body 示例见下方
-
-PowerShell 示例（验证一条 BibTeX）：
-
-```powershell
-$body = @{
-  bibtex_content = "@article{test2020, title={Test Paper}, author={Author, First}, year={2020}, journal={Test Journal}}"
-  profile = "balanced"
-  options = @{ check_duplicates = $true; top_k_candidates = 8 }
-} | ConvertTo-Json -Depth 5
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/verify/bib" -Method Post -Body $body -ContentType "application/json; charset=utf-8"
-```
-
-或用 curl（Git Bash / WSL）：
-
-```bash
-curl -X POST "http://127.0.0.1:8000/api/v1/verify/bib" -H "Content-Type: application/json" -d "{\"bibtex_content\": \"@article{test2020, title={Test Paper}, author={Author, First}, year={2020}}\", \"profile\": \"balanced\"}"
-```
-
-### 2. CLI 测试
-
-用项目自带的示例 Bib 文件：
-
-```bash
-refcheck verify bib --input tests/test_bib.bib --profile balanced --out ./report/
-```
-
-完成后查看 `./report/report.json` 和 `./report/report.md`。
-
-### 3. 自动化测试（pytest）
-
-安装 dev 依赖后运行项目内测试：
+For development:
 
 ```bash
 pip install -e ".[dev]"
-pytest tests/ -v
 ```
 
-## 许可证
+## CLI Usage
 
-GPL-3.0-or-later。详见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。
+Verify a BibTeX file:
+
+```bash
+refguard verify bib --input tests/test_bib.bib --profile balanced --out ./report
+```
+
+The legacy command name is also available:
+
+```bash
+refcheck verify bib --input tests/test_bib.bib
+```
+
+Verify a BibTeX file and LaTeX citation usage:
+
+```bash
+refguard verify project --bib paper/references.bib --tex paper/main.tex --check-usage on --out ./report
+```
+
+## API Usage
+
+Start the API server:
+
+```bash
+uvicorn main:app --reload
+```
+
+Open:
+
+- http://127.0.0.1:8000/docs
+- http://127.0.0.1:8000/api/v1/sources/status
+
+Example request:
+
+```bash
+curl -X POST "http://127.0.0.1:8000/api/v1/verify/bib" \
+  -H "Content-Type: application/json" \
+  -d '{"bibtex_content":"@article{demo,title={Attention Is All You Need},author={Vaswani, Ashish and Shazeer, Noam},year={2017}}","profile":"balanced"}'
+```
+
+## Configuration
+
+Copy `.env.example` to `.env` only if you need local overrides.
+
+All API keys are optional and should stay out of version control:
+
+- `SEMANTIC_SCHOLAR_API_KEY`: optional higher rate limit.
+- `OPENALEX_API_KEY`: optional.
+- `CROSSREF_MAILTO`: optional polite-pool email.
+- `OPENAI_API_KEY` / `DASHSCOPE_API_KEY`: optional relevance checks only, not used by identity verification.
+
+## Benchmark Data
+
+Small sample and benchmark files live under `data/`. Treat them as research artifacts: keep only bibliographic metadata, labels, and provenance that can be redistributed. Do not commit raw papers, private uploads, proprietary database exports, or API keys.
+
+Run the benchmark helper:
+
+```bash
+python eval/run_benchmark.py --input data/refguard_input.jsonl --out eval_report
+```
+
+## Development Checks
+
+```bash
+python -m unittest discover tests
+python -m py_compile refguard
+```
+
+If `pytest` is installed:
+
+```bash
+pytest tests -q
+```
+
+## License
+
+Code is released under the MIT License. See [LICENSE](LICENSE).

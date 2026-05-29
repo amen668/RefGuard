@@ -15,7 +15,7 @@ class CrossrefFetcher(BaseFetcher):
     source_name = "crossref"
 
     def __init__(self, mailto: str | None = None) -> None:
-        self.mailto = mailto or settings.crossref_mailto or "refguard@localhost"
+        self.mailto = mailto or settings.crossref_mailto
         self._last = 0.0
         self._session = requests.Session()
         self._timeout = getattr(settings, "request_timeout", 30)
@@ -29,7 +29,11 @@ class CrossrefFetcher(BaseFetcher):
 
     def _headers(self) -> dict:
         return {
-            "User-Agent": f"RefGuard/1.0 (mailto:{self.mailto})",
+            "User-Agent": (
+                f"RefGuard/1.0 (mailto:{self.mailto})"
+                if self.mailto
+                else "RefGuard/1.0 (https://github.com/refguard/refguard)"
+            ),
             "Accept": "application/json",
         }
 

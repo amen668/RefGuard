@@ -4,7 +4,10 @@ from pathlib import Path
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="refcheck", description="RefGuard: Reference Integrity & Citation Quality Checker")
+    parser = argparse.ArgumentParser(
+        prog="refguard",
+        description="RefGuard: Reference Integrity & Citation Quality Checker",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
     # verify bib
     verify = sub.add_parser("verify", help="Verify bibliography (bib or project)")

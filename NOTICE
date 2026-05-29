@@ -1,20 +1,15 @@
 RefGuard - Reference Integrity & Citation Quality Checker
-Copyright (C) RefGuard Contributors
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version. See LICENSE.
+Copyright (c) 2026 RefGuard contributors.
 
-Data sources and APIs used (rate limits and terms apply):
-- Crossref: https://www.crossref.org/documentation/retrieve-metadata/rest-api/
-- arXiv: https://info.arxiv.org/help/api/
-- OpenAlex: https://docs.openalex.org/ (API key required from 2026-02-13)
-- Semantic Scholar: https://www.semanticscholar.org/product/api
-- DBLP: https://dblp.org/faq/
+RefGuard verifies bibliography metadata against public scholarly sources and
+produces evidence-based reports. Reference identity decisions are based on
+metadata matching and evidence fusion, not on LLM output.
 
-LLM (optional): Alibaba DashScope/Qwen. Use of LLM sends citation context and
-abstract/metadata to the configured provider. Set DASHSCOPE_API_KEY only if
-you enable check_relevance.
+Optional LLM relevance checks may send citation context and bibliographic
+metadata to the provider configured by the user. They are disabled by default.
+Do not commit provider API keys or private documents.
 
-No telemetry by default (REFGUARD_TELEMETRY=false).
+Public data sources used by RefGuard may include Crossref, OpenAlex, arXiv,
+DBLP, and Semantic Scholar. Users are responsible for complying with each
+source's terms of use and rate limits.

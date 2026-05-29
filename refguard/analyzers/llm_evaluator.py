@@ -1,4 +1,9 @@
-"""LLM citation relevance evaluator (optional). Supports DashScope/Qwen."""
+"""Optional LLM citation relevance evaluator.
+
+RefGuard's reference identity checks do not depend on an LLM. This module is
+only for the separate Bib+TeX relevance check, where users explicitly opt in
+and provide their own provider key.
+"""
 import json
 import re
 from dataclasses import dataclass
@@ -13,7 +18,7 @@ logger = get_logger(__name__)
 
 
 class LLMBackend(Enum):
-    DASHSCOPE = "dashscope"  # Alibaba Qwen
+    DASHSCOPE = "dashscope"
     OPENAI = "openai"
 
 
@@ -60,13 +65,14 @@ class LLMEvaluator:
         api_key: Optional[str] = None,
     ) -> None:
         self.backend = backend
-        self.api_key = api_key or getattr(settings, "dashscope_api_key", None) or getattr(settings, "DASHSCOPE_API_KEY", None)
         if backend == LLMBackend.DASHSCOPE:
+            self.api_key = api_key or settings.dashscope_api_key
             self.endpoint = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
             self.model = model or "qwen-turbo"
         else:
+            self.api_key = api_key or settings.openai_api_key
             self.endpoint = "https://api.openai.com/v1/chat/completions"
-            self.model = model or "gpt-3.5-turbo"
+            self.model = model or "gpt-4o-mini"
 
     def evaluate(
         self,
@@ -128,6 +134,8 @@ class LLMEvaluator:
         return data.get("choices", [{}])[0].get("message", {}).get("content", "")
 
     def _call_openai_compatible(self, prompt: str) -> str:
+        if not self.api_key:
+            raise ValueError("OPENAI_API_KEY required for OpenAI-compatible relevance evaluation")
         r = requests.post(
             self.endpoint,
             headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},

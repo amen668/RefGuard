@@ -1,4 +1,4 @@
-"""OpenAlex fetcher: search(entry) -> List[SourceHit]. API key required from 2026-02-13."""
+"""OpenAlex fetcher: search(entry) -> List[SourceHit]."""
 import time
 from typing import List, Optional
 from urllib.parse import quote
@@ -19,7 +19,7 @@ class OpenAlexFetcher(BaseFetcher):
         self.api_key = api_key or settings.openalex_api_key
         self._last = 0.0
         self._session = requests.Session()
-        self._session.headers["User-Agent"] = "RefGuard/1.0 (mailto:refguard@localhost)"
+        self._session.headers["User-Agent"] = "RefGuard/1.0 (https://github.com/refguard/refguard)"
         if self.api_key:
             self._session.headers["Authorization"] = f"Bearer {self.api_key}"
         self._timeout = getattr(settings, "request_timeout", 30)
