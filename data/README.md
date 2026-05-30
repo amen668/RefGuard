@@ -1,6 +1,6 @@
 # 数据目录
 
-本目录用于放置公开样例和可复现实验记录。当前项目数据来自公开来源和公开元数据。
+本目录用于放置公开样例、可复现实验记录和数据整理说明。当前基准数据将重新整理，正式源数据和生成产物暂不随仓库保留。
 
 公开可访问不等于自动可再分发。用于论文附件、公开 release 或第三方复用前，请逐项核查来源许可、API 条款和引用要求。
 
@@ -20,15 +20,12 @@
 
 ## 当前文件
 
-- `citation_dataset_final_v4.json`：V4 源数据，共 1147 条，其中真实文献 939 条、幻觉文献 208 条。
-- `refguard_input.jsonl`：正式基准输入，共 1147 条，其中真实文献 939 条、幻觉文献 208 条。
-- `refguard_input_summary.json`：由生成脚本输出的数据质量摘要。
 - `DATASET_CARD.md`：数据集字段、标签和使用边界说明。
 - `BIBTEX_DATA_PREPARATION.md`：后续整理真实文献 BibTeX 的字段、清洗和核验流程。
 
 ## 生成方式
 
-`refguard_input.jsonl` 由源数据自动生成，不手工维护：
+整理完成后，源数据建议命名为 `citation_dataset_final_v4.json` 或后续版本文件。`refguard_input.jsonl` 由源数据自动生成，不手工维护：
 
 ```bash
 python scripts/build_refguard_input.py
