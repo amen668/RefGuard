@@ -20,8 +20,20 @@
 
 ## 当前文件
 
-- `refguard_input.jsonl`：正式基准输入，共 1295 条，其中真实文献 1087 条、幻觉文献 208 条。
-- `sample_refguard_input.jsonl`：从正式基准中截取的 20 条小样例，用于快速查看字段结构。
+- `citation_dataset_final_v4.json`：V4 源数据，共 1147 条，其中真实文献 939 条、幻觉文献 208 条。
+- `refguard_input.jsonl`：正式基准输入，共 1147 条，其中真实文献 939 条、幻觉文献 208 条。
+- `refguard_input_summary.json`：由生成脚本输出的数据质量摘要。
 - `DATASET_CARD.md`：数据集字段、标签和使用边界说明。
+- `BIBTEX_DATA_PREPARATION.md`：后续整理真实文献 BibTeX 的字段、清洗和核验流程。
+
+## 生成方式
+
+`refguard_input.jsonl` 由源数据自动生成，不手工维护：
+
+```bash
+python scripts/build_refguard_input.py
+```
+
+生成脚本会规范作者列表、补齐参考文献原始文本、清理占位链接，并检查关键字段缺失、重复 ID 和 placeholder URL。
 
 正式用于论文附件或公开 release 前，请再次核查其来源、许可和可再分发性。

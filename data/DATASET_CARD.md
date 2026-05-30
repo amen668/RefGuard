@@ -2,19 +2,21 @@
 
 ## 基本信息
 
-`refguard_input.jsonl` 是 RefGuard 的论文实验基准数据，共 1295 条参考文献记录。
+`refguard_input.jsonl` 是 RefGuard 的论文实验基准数据，由 `citation_dataset_final_v4.json` 通过 `scripts/build_refguard_input.py` 生成。源数据与当前评测输入均为 1147 条参考文献记录。
 
 标签分布：
 
-- 真实文献：1087 条
+- 真实文献：939 条
 - 幻觉文献：208 条
 
 语言分布：
 
-- 英文文献：1023 条
-- 中文文献：228 条
+- 英文文献：1067 条
+- 中文文献：80 条（真实 40 条、幻觉 40 条）
 
 数据仅包含书目信息、核验标签和必要元数据，不包含论文全文、用户上传文件、账号凭据、cookie 或 API 原始响应。
+
+生成后的数据质量摘要见 `refguard_input_summary.json`：当前版本无重复 ID、无 placeholder URL，关键字段无缺失。此前公开复核性不足的 CNKI 记录已从源数据中移除。
 
 ## 字段说明
 
@@ -37,6 +39,12 @@
 - `meta`：语言、文献类型、学科、幻觉类型等实验元数据。
 
 ## 使用方式
+
+重新生成评测输入：
+
+```bash
+python scripts/build_refguard_input.py
+```
 
 运行小规模 smoke test：
 
