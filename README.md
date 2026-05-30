@@ -48,12 +48,6 @@ pip install -e ".[dev]"
 refguard verify bib --input tests/test_bib.bib --profile balanced --out ./report
 ```
 
-兼容旧命令名：
-
-```bash
-refcheck verify bib --input tests/test_bib.bib
-```
-
 核验 BibTeX 并检查 LaTeX 引用使用情况：
 
 ```bash

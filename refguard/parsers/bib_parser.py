@@ -1,7 +1,6 @@
 """BibTeX 解析器，补充原始条目、作者列表和来源字段。"""
 import re
 from pathlib import Path
-from typing import Optional
 
 import bibtexparser
 from bibtexparser.bparser import BibTexParser
@@ -100,9 +99,3 @@ class BibParser:
                 if m:
                     return m.group(1)
         return ""
-
-    def get_entry_by_key(self, key: str) -> Optional[BibEntry]:
-        for e in self.entries:
-            if e.key == key:
-                return e
-        return None

@@ -22,7 +22,3 @@ class WorkflowConfig:
         if self.enabled is not None:
             return [s for s in self.enabled if s in src]
         return src
-
-
-def get_default_sources() -> List[str]:
-    return DEFAULT_SOURCES.copy()

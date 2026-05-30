@@ -41,10 +41,3 @@ class MatchFeatures:
             self.venue_sim,
             self.source_score,
         ]
-
-
-FEATURE_NAMES = [
-    "title_sim", "author_sim", "year_match", "doi_match", "id_match",
-    "source_prior", "rank_feature", "title_length", "author_count",
-    "has_doi", "has_arxiv_id", "url_match", "venue_sim", "source_score",
-]

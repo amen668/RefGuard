@@ -98,7 +98,6 @@ def _author_similarity(bib_list: list, hit_list: list) -> float:
     return inter / union if union else 0.0
 
 
-# 供融合模型按固定顺序取特征。
 FEATURE_NAMES = [
     "title_sim", "author_sim", "year_match", "doi_match", "id_match",
     "source_prior", "rank_feature", "title_length", "author_count",

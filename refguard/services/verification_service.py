@@ -5,7 +5,7 @@ from refguard.parsers import BibParser, TexParser
 from refguard.models import BibEntry, EntryReport, RunMetadata
 from refguard.config import get_profile, WorkflowConfig
 from refguard.retrieval import CandidateGenerator
-from refguard.fusion import FeatureBuilder, FusionModel, DecisionEngine
+from refguard.fusion import FusionModel, DecisionEngine
 from refguard.analyzers import DuplicateDetector, UsageChecker
 from refguard.report import ReportGenerator
 from refguard.core import get_logger

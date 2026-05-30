@@ -25,15 +25,3 @@ class BibEntry:
     raw_bibtex: str = ""
     authors: list[str] = field(default_factory=list)
     venue: str = ""
-
-    @property
-    def has_arxiv(self) -> bool:
-        return bool(self.arxiv_id)
-
-    @property
-    def has_doi(self) -> bool:
-        return bool(self.doi)
-
-    @property
-    def search_query(self) -> str:
-        return self.title or self.key
