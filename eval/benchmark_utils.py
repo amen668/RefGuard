@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Convert refguard_input.jsonl record to minimal BibTeX for RefGuard verify_bib."""
+"""将基准数据记录转换为 RefGuard 可核验的最小 BibTeX。"""
 def _escape_bibtex(s: str) -> str:
-    """Escape braces and backslash for BibTeX field value."""
+    """转义 BibTeX 字段值中的特殊字符。"""
     if not s:
         return ""
     s = s.replace("\\", "\\\\")
@@ -9,10 +9,7 @@ def _escape_bibtex(s: str) -> str:
 
 
 def record_to_bibtex(record: dict, entry_key: str = "ref") -> str:
-    """
-    Build a minimal BibTeX entry from one refguard_input.jsonl record.
-    Uses reference.parsed (title, authors, year, doi, arxiv) or reference.raw as fallback.
-    """
+    """根据一条 JSONL 记录构造最小 BibTeX 条目。"""
     ref = record.get("reference") or {}
     parsed = ref.get("parsed") or {}
     title = (parsed.get("title") or "").strip() or "Unknown"

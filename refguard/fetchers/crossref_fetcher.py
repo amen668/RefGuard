@@ -1,10 +1,8 @@
-"""Crossref fetcher: search(entry) -> List[SourceHit]."""
-import time
-from typing import List
+"""Crossref 元数据源。"""
 
 import requests
 
-from refguard.models import BibEntry, SourceHit
+from refguard.models import SourceHit
 from refguard.core import settings
 from refguard.core.cache import cache_manager
 from .base import BaseFetcher
@@ -15,17 +13,11 @@ class CrossrefFetcher(BaseFetcher):
     source_name = "crossref"
 
     def __init__(self, mailto: str | None = None) -> None:
+        super().__init__(
+            rate_limit_delay=settings.crossref_rate_limit_delay,
+            timeout=getattr(settings, "request_timeout", 30),
+        )
         self.mailto = mailto or settings.crossref_mailto
-        self._last = 0.0
-        self._session = requests.Session()
-        self._timeout = getattr(settings, "request_timeout", 30)
-        self._delay = settings.crossref_rate_limit_delay
-
-    def _wait(self) -> None:
-        elapsed = time.monotonic() - self._last
-        if elapsed < self._delay:
-            time.sleep(self._delay - elapsed)
-        self._last = time.monotonic()
 
     def _headers(self) -> dict:
         return {
@@ -37,25 +29,9 @@ class CrossrefFetcher(BaseFetcher):
             "Accept": "application/json",
         }
 
-    def search(self, entry: BibEntry) -> List[SourceHit]:
-        out: List[SourceHit] = []
-        # 1) DOI lookup
-        if entry.doi:
-            hit = self._fetch_by_doi_cached(entry.doi)
-            if hit:
-                hit.rank = 1
-                hit.retrieval_method = "doi"
-                hit.query = entry.doi
-                out.append(hit)
-        # 2) Title search
-        if entry.title and len(out) < 5:
-            hits = self._search_by_title(entry.title, max_results=5)
-            for i, h in enumerate(hits):
-                h.rank = len(out) + i + 1
-                h.retrieval_method = "title_search"
-                h.query = entry.title
-                out.append(h)
-        return out[:10]
+    def lookup_by_doi(self, doi: str) -> list[SourceHit]:
+        hit = self._fetch_by_doi_cached(doi)
+        return [hit] if hit else []
 
     def _fetch_by_doi_cached(self, doi: str) -> SourceHit | None:
         key = f"crossref:doi:{doi}"
@@ -81,14 +57,14 @@ class CrossrefFetcher(BaseFetcher):
         except requests.RequestException:
             return None
 
-    def _search_by_title(self, title: str, max_results: int = 5) -> List[SourceHit]:
+    def search_by_title(self, title: str) -> list[SourceHit]:
         self._wait()
         try:
             r = self._session.get(
                 self.BASE_URL,
                 params={
                     "query.title": title,
-                    "rows": max_results,
+                    "rows": 5,
                     "select": "title,author,published-print,published-online,DOI,publisher,container-title,abstract",
                 },
                 headers=self._headers(),

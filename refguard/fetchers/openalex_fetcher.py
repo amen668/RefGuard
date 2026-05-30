@@ -1,11 +1,10 @@
-"""OpenAlex fetcher: search(entry) -> List[SourceHit]."""
-import time
-from typing import List, Optional
+"""OpenAlex 元数据源。"""
+from typing import Optional
 from urllib.parse import quote
 
 import requests
 
-from refguard.models import BibEntry, SourceHit
+from refguard.models import SourceHit
 from refguard.core import settings
 from refguard.core.cache import cache_manager
 from .base import BaseFetcher
@@ -16,38 +15,18 @@ class OpenAlexFetcher(BaseFetcher):
     source_name = "openalex"
 
     def __init__(self, api_key: str | None = None) -> None:
+        super().__init__(
+            rate_limit_delay=settings.openalex_rate_limit_delay,
+            timeout=getattr(settings, "request_timeout", 30),
+        )
         self.api_key = api_key or settings.openalex_api_key
-        self._last = 0.0
-        self._session = requests.Session()
         self._session.headers["User-Agent"] = "RefGuard/1.0 (https://github.com/refguard/refguard)"
         if self.api_key:
             self._session.headers["Authorization"] = f"Bearer {self.api_key}"
-        self._timeout = getattr(settings, "request_timeout", 30)
-        self._delay = settings.openalex_rate_limit_delay
 
-    def _wait(self) -> None:
-        elapsed = time.monotonic() - self._last
-        if elapsed < self._delay:
-            time.sleep(self._delay - elapsed)
-        self._last = time.monotonic()
-
-    def search(self, entry: BibEntry) -> List[SourceHit]:
-        out: List[SourceHit] = []
-        if entry.doi:
-            hit = self._fetch_by_doi_cached(entry.doi)
-            if hit:
-                hit.rank = 1
-                hit.retrieval_method = "doi"
-                hit.query = entry.doi
-                out.append(hit)
-        if entry.title and len(out) < 5:
-            hits = self._search_by_title(entry.title, max_results=5)
-            for i, h in enumerate(hits):
-                h.rank = len(out) + i + 1
-                h.retrieval_method = "title_search"
-                h.query = entry.title
-                out.append(h)
-        return out[:10]
+    def lookup_by_doi(self, doi: str) -> list[SourceHit]:
+        hit = self._fetch_by_doi_cached(doi)
+        return [hit] if hit else []
 
     def _fetch_by_doi_cached(self, doi: str) -> Optional[SourceHit]:
         key = f"openalex:doi:{doi}"
@@ -66,12 +45,12 @@ class OpenAlexFetcher(BaseFetcher):
         except requests.RequestException:
             return None
 
-    def _search_by_title(self, title: str, max_results: int = 5) -> List[SourceHit]:
+    def search_by_title(self, title: str) -> list[SourceHit]:
         self._wait()
         try:
             r = self._session.get(
                 f"{self.BASE_URL}/works",
-                params={"search": title, "per-page": max_results},
+                params={"search": title, "per-page": 5},
                 timeout=self._timeout,
             )
             r.raise_for_status()

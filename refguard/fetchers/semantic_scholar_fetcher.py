@@ -1,10 +1,9 @@
-"""Semantic Scholar fetcher: search(entry) -> List[SourceHit]."""
-import time
-from typing import List, Optional
+"""Semantic Scholar 元数据源。"""
+from typing import Optional
 
 import requests
 
-from refguard.models import BibEntry, SourceHit
+from refguard.models import SourceHit
 from refguard.core import settings
 from refguard.core.cache import cache_manager
 from .base import BaseFetcher
@@ -15,45 +14,31 @@ class SemanticScholarFetcher(BaseFetcher):
     source_name = "semanticscholar"
 
     def __init__(self, api_key: str | None = None) -> None:
+        super().__init__(
+            rate_limit_delay=settings.semantic_scholar_rate_limit_delay,
+            timeout=getattr(settings, "request_timeout", 30),
+        )
         self.api_key = api_key or settings.semantic_scholar_api_key
-        self._last = 0.0
-        self._session = requests.Session()
         if self.api_key:
             self._session.headers["x-api-key"] = self.api_key
         self._session.headers["User-Agent"] = "RefGuard/1.0"
-        self._timeout = getattr(settings, "request_timeout", 30)
-        self._delay = settings.semantic_scholar_rate_limit_delay
 
-    def _wait(self) -> None:
-        elapsed = time.monotonic() - self._last
-        if elapsed < self._delay:
-            time.sleep(self._delay - elapsed)
-        self._last = time.monotonic()
-
-    def search(self, entry: BibEntry) -> List[SourceHit]:
-        out: List[SourceHit] = []
+    def _query_plan(self, entry):
+        plan = []
         if entry.doi:
-            hit = self._fetch_by_doi_cached(entry.doi)
-            if hit:
-                hit.rank = 1
-                hit.retrieval_method = "doi"
-                hit.query = entry.doi
-                out.append(hit)
-        if entry.arxiv_id and not out:
-            hit = self._fetch_by_arxiv_cached(entry.arxiv_id)
-            if hit:
-                hit.rank = 1
-                hit.retrieval_method = "arxiv_id"
-                hit.query = entry.arxiv_id
-                out.append(hit)
-        if entry.title and len(out) < 5:
-            hit = self._search_by_title(entry.title)
-            if hit:
-                hit.rank = len(out) + 1
-                hit.retrieval_method = "title_search"
-                hit.query = entry.title
-                out.append(hit)
-        return out[:10]
+            plan.append(("doi", entry.doi, self.lookup_by_doi))
+        if entry.arxiv_id and not entry.doi:
+            plan.append(("arxiv_id", entry.arxiv_id, self.lookup_by_arxiv_id))
+        plan.append(("title_search", entry.title, self.search_by_title))
+        return plan
+
+    def lookup_by_doi(self, doi: str) -> list[SourceHit]:
+        hit = self._fetch_by_doi_cached(doi)
+        return [hit] if hit else []
+
+    def lookup_by_arxiv_id(self, arxiv_id: str) -> list[SourceHit]:
+        hit = self._fetch_by_arxiv_cached(arxiv_id)
+        return [hit] if hit else []
 
     def _fetch_by_doi_cached(self, doi: str) -> Optional[SourceHit]:
         key = f"s2:doi:{doi}"
@@ -95,7 +80,7 @@ class SemanticScholarFetcher(BaseFetcher):
         except requests.RequestException:
             return None
 
-    def _search_by_title(self, title: str) -> Optional[SourceHit]:
+    def search_by_title(self, title: str) -> list[SourceHit]:
         self._wait()
         try:
             r = self._session.get(
@@ -107,10 +92,11 @@ class SemanticScholarFetcher(BaseFetcher):
             data = r.json()
             papers = data.get("data", [])
             if not papers:
-                return None
-            return self._parse_paper(papers[0])
+                return []
+            hit = self._parse_paper(papers[0])
+            return [hit] if hit else []
         except requests.RequestException:
-            return None
+            return []
 
     def _parse_paper(self, p: dict) -> Optional[SourceHit]:
         try:

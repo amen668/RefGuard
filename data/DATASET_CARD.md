@@ -1,43 +1,51 @@
-# RefGuard 基准数据说明
+# RefGuard 基准数据卡
 
-## 状态
+## 基本信息
 
-本目录中的基准数据来自公开来源和公开元数据，应被视为研究数据，而不是自动可再分发的数据集。公开可访问不等于自动可再分发；正式公开完整数据集前，应逐项核查来源许可、API 条款和引用要求。
+`refguard_input.jsonl` 是 RefGuard 的论文实验基准数据，共 1295 条参考文献记录。
 
-公开 release 前请确认：
+标签分布：
 
-- 每条来源记录都来自公开来源，并已核查可按当前字段形式再分发。
-- 标签和说明由项目自行撰写，或具有可再分发许可。
-- 不包含私人论文、API 原始响应、cookie、凭据或非公开数据源导出。
-- 不包含需要登录、授权、cookie 或工作账号才能访问的数据源派生内容及抓取结果。
+- 真实文献：1087 条
+- 幻觉文献：208 条
 
-## 推荐公开形式
+语言分布：
 
-仓库中建议：
+- 英文文献：1023 条
+- 中文文献：228 条
 
-- 保留小规模 JSONL 样例，用于 smoke test 和示例。
-- 完整基准数据在许可明确前，不随默认包发布。
+数据仅包含书目信息、核验标签和必要元数据，不包含论文全文、用户上传文件、账号凭据、cookie 或 API 原始响应。
 
-论文附件建议：
+## 字段说明
 
-- 发布冻结版本的基准数据归档，包含数据版本、许可、来源说明和评测脚本。
-- 提供足够复现实验的元数据，但不分发受版权保护的全文内容。
+每行是一条 JSON 记录，主要字段如下：
 
-## JSONL 字段
+- `paper_id`：记录编号。
+- `paper_title`：来源论文题名；没有来源论文时为空。
+- `paper_url`：来源论文公开 URL；没有时为空。
+- `reference.raw`：原始参考文献文本。
+- `reference.parsed.title`：参考文献题名。
+- `reference.parsed.authors`：作者列表。
+- `reference.parsed.year`：发表年份。
+- `reference.parsed.venue`：期刊、会议、出版社或其他来源。
+- `reference.parsed.doi`：DOI，没有时为 `null`。
+- `reference.parsed.arxiv`：arXiv 编号，没有时为 `null`。
+- `ground_truth.is_hallucinated`：是否为幻觉文献。
+- `ground_truth.label`：原始标签，取值为 `real` 或 `hallucination`。
+- `ground_truth.notes`：标注状态和可核验性说明。
+- `source`：数据版本标识。
+- `meta`：语言、文献类型、学科、幻觉类型等实验元数据。
 
-期望字段：
+## 使用方式
 
-- `paper_id`
-- `paper_title`
-- `paper_url`
-- `reference.raw`
-- `reference.parsed.title`
-- `reference.parsed.authors`
-- `reference.parsed.year`
-- `reference.parsed.venue`
-- `reference.parsed.doi`
-- `reference.parsed.arxiv`
-- `reference.parsed.url`
-- `ground_truth.is_hallucinated`
-- `ground_truth.notes`
-- `source`
+运行小规模 smoke test：
+
+```bash
+python eval/run_benchmark.py --input data/refguard_input.jsonl --out tmp_eval_check --limit 1 --sources unknown
+```
+
+运行完整评测时会访问公开元数据接口，请遵守各接口的请求频率、API 条款和引用要求。
+
+## 开源边界
+
+本数据用于个人研究和论文实验复现。公开可访问不等于自动可再分发；如将数据用于论文附件、公开 release 或第三方复用，请再次核查来源许可、API 条款和引用要求。

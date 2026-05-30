@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""
-Run RefGuard on refguard_input.jsonl benchmark and compute metrics.
-
-Usage:
-  python eval/run_benchmark.py --input /path/to/refguard_input.jsonl --out ./eval_report
-  python eval/run_benchmark.py --input refguard_input.jsonl --profile strict --limit 10
-
-Input: refguard_input.jsonl (each line: paper_id, reference {raw, parsed}, ground_truth {is_hallucinated, notes}).
-Output: RefGuard predicts is_match per reference; we treat is_match=False as "hallucination predicted".
-Metrics: accuracy, precision, recall, F1 for hallucination class; confusion matrix.
-"""
+"""运行 RefGuard 基准评测并计算幻觉文献检测指标。"""
 import argparse
 import json
 import sys
@@ -22,19 +12,19 @@ from eval.benchmark_utils import record_to_bibtex
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="RefGuard benchmark on refguard_input.jsonl")
+    parser = argparse.ArgumentParser(description="在 refguard_input.jsonl 上运行 RefGuard 基准评测")
     parser.add_argument("--input", "-i", default="data/refguard_input.jsonl",
-                        help="Path to refguard_input.jsonl (default: data/refguard_input.jsonl)")
-    parser.add_argument("--out", "-o", default="./eval_report", help="Output directory for report")
+                        help="基准数据路径，默认 data/refguard_input.jsonl")
+    parser.add_argument("--out", "-o", default="./eval_report", help="评测报告输出目录")
     parser.add_argument("--profile", "-p", default="balanced", choices=["strict", "balanced", "lenient"])
-    parser.add_argument("--limit", "-n", type=int, default=None, help="Max number of records to run (default: all)")
+    parser.add_argument("--limit", "-n", type=int, default=None, help="最多评测多少条，默认全部")
     parser.add_argument("--sources", "-s", default="crossref,openalex,arxiv,dblp,semanticscholar",
-                        help="Comma-separated retrieval sources")
+                        help="逗号分隔的数据源名称")
     args = parser.parse_args()
 
     input_path = Path(args.input)
     if not input_path.exists():
-        print(f"Error: input file not found: {input_path}", file=sys.stderr)
+        print(f"错误：找不到输入文件：{input_path}", file=sys.stderr)
         sys.exit(1)
 
     records = []
@@ -49,7 +39,7 @@ def main() -> None:
         records = records[: args.limit]
 
     if not records:
-        print("No records to evaluate.", file=sys.stderr)
+        print("没有可评测的记录。", file=sys.stderr)
         sys.exit(1)
 
     from refguard.services import VerificationService
@@ -78,7 +68,7 @@ def main() -> None:
             else:
                 status = "verified" if is_match else ("warning" if prob >= 0.3 else "error")
         gt_hallucinated = (rec.get("ground_truth") or {}).get("is_hallucinated", True)
-        pred_hallucinated = not is_match  # RefGuard no match -> we predict hallucination
+        pred_hallucinated = not is_match
         results.append({
             "index": i,
             "paper_id": rec.get("paper_id"),
@@ -90,7 +80,7 @@ def main() -> None:
             "correct": gt_hallucinated == pred_hallucinated,
         })
 
-    # Metrics: positive class = hallucination
+    # 正类定义为幻觉文献。
     tp = sum(1 for r in results if r["ground_truth_hallucinated"] and r["predicted_hallucinated"])
     tn = sum(1 for r in results if not r["ground_truth_hallucinated"] and not r["predicted_hallucinated"])
     fp = sum(1 for r in results if not r["ground_truth_hallucinated"] and r["predicted_hallucinated"])
@@ -124,11 +114,11 @@ def main() -> None:
         json.dump(report_json, f, ensure_ascii=False, indent=2)
 
     report_md = [
-        "# RefGuard Benchmark Report",
+        "# RefGuard 基准评测报告",
         "",
         f"**Input:** `{input_path.name}` | **Profile:** {args.profile} | **N:** {n}",
         "",
-        "## Metrics",
+        "## 指标",
         "",
         "| Metric | Value |",
         "|--------|--------|",
@@ -137,7 +127,7 @@ def main() -> None:
         f"| Recall (hallucination) | {recall:.4f} |",
         f"| F1 (hallucination) | {f1:.4f} |",
         "",
-        "## Confusion Matrix (positive = hallucination)",
+        "## 混淆矩阵（正类 = 幻觉文献）",
         "",
         "| | Predicted Hallucination | Predicted Not Hallucination |",
         "|--|--------------------------|-----------------------------|",
@@ -149,7 +139,7 @@ def main() -> None:
         f.write("\n".join(report_md))
 
     print(f"Total: {n} | Accuracy: {accuracy:.4f} | P: {precision:.4f} R: {recall:.4f} F1: {f1:.4f}")
-    print(f"Report written to {out_dir}/eval_report.json and {out_dir}/eval_report.md")
+    print(f"报告已写入 {out_dir}/eval_report.json 和 {out_dir}/eval_report.md")
 
 
 if __name__ == "__main__":

@@ -1,12 +1,11 @@
-"""arXiv fetcher: search(entry) -> List[SourceHit]. 1 req / 3s."""
+"""arXiv 元数据源。"""
 import re
-import time
 import xml.etree.ElementTree as ET
-from typing import List, Optional
+from typing import Optional
 
 import requests
 
-from refguard.models import BibEntry, SourceHit
+from refguard.models import SourceHit
 from refguard.core import settings
 from refguard.core.cache import cache_manager
 from .base import BaseFetcher
@@ -17,34 +16,15 @@ class ArxivFetcher(BaseFetcher):
     source_name = "arxiv"
 
     def __init__(self) -> None:
-        self._last = 0.0
-        self._timeout = getattr(settings, "request_timeout", 30)
-        self._delay = settings.arxiv_rate_limit_delay
+        super().__init__(
+            rate_limit_delay=settings.arxiv_rate_limit_delay,
+            timeout=getattr(settings, "request_timeout", 30),
+        )
 
-    def _wait(self) -> None:
-        elapsed = time.monotonic() - self._last
-        if elapsed < self._delay:
-            time.sleep(self._delay - elapsed)
-        self._last = time.monotonic()
-
-    def search(self, entry: BibEntry) -> List[SourceHit]:
-        out: List[SourceHit] = []
-        if entry.arxiv_id:
-            aid = re.sub(r"^arXiv:", "", entry.arxiv_id, flags=re.IGNORECASE).strip()
-            hit = self._fetch_by_id_cached(aid)
-            if hit:
-                hit.rank = 1
-                hit.retrieval_method = "arxiv_id"
-                hit.query = aid
-                out.append(hit)
-        if entry.title and len(out) < 5:
-            hits = self._search_by_title(entry.title, max_results=5)
-            for i, h in enumerate(hits):
-                h.rank = len(out) + i + 1
-                h.retrieval_method = "title_search"
-                h.query = entry.title
-                out.append(h)
-        return out[:10]
+    def lookup_by_arxiv_id(self, arxiv_id: str) -> list[SourceHit]:
+        aid = re.sub(r"^arXiv:", "", arxiv_id, flags=re.IGNORECASE).strip()
+        hit = self._fetch_by_id_cached(aid)
+        return [hit] if hit else []
 
     def _fetch_by_id_cached(self, arxiv_id: str) -> Optional[SourceHit]:
         key = f"arxiv:id:{arxiv_id}"
@@ -53,7 +33,7 @@ class ArxivFetcher(BaseFetcher):
             return cached
         self._wait()
         try:
-            r = requests.get(
+            r = self._session.get(
                 self.API_BASE,
                 params={"id_list": arxiv_id, "max_results": 1},
                 timeout=self._timeout,
@@ -69,15 +49,15 @@ class ArxivFetcher(BaseFetcher):
         except requests.RequestException:
             return None
 
-    def _search_by_title(self, title: str, max_results: int = 5) -> List[SourceHit]:
+    def search_by_title(self, title: str) -> list[SourceHit]:
         self._wait()
         clean = re.sub(r"[^\w\s]", " ", title)
         clean = re.sub(r"\s+", " ", clean).strip()
         q = f'ti:"{clean}"'
         try:
-            r = requests.get(
+            r = self._session.get(
                 self.API_BASE,
-                params={"search_query": q, "max_results": max_results, "sortBy": "relevance", "sortOrder": "descending"},
+                params={"search_query": q, "max_results": 5, "sortBy": "relevance", "sortOrder": "descending"},
                 timeout=self._timeout,
                 headers={"User-Agent": "RefGuard/1.0 (https://github.com/refguard/refguard)"},
             )

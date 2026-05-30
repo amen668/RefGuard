@@ -1,17 +1,18 @@
-"""CandidateGenerator: aggregate multi-source candidates and keep Top-K."""
-from typing import List
+"""多数据源候选生成。"""
 
 from refguard.models import BibEntry, SourceHit
 from refguard.fetchers import get_fetcher
-from refguard.config import get_profile
+from refguard.core import get_logger
+
+logger = get_logger(__name__)
 
 
 class CandidateGenerator:
-    """Call enabled fetchers for one entry, merge, deduplicate, and keep Top-K."""
+    """调用启用的数据源，合并去重后保留 Top-K。"""
 
     def __init__(
         self,
-        sources: List[str],
+        sources: list[str],
         top_k: int = 8,
     ) -> None:
         self.sources = sources
@@ -23,23 +24,25 @@ class CandidateGenerator:
             self._fetchers[name] = get_fetcher(name)
         return self._fetchers[name]
 
-    def generate(self, entry: BibEntry) -> tuple[List[SourceHit], dict[str, int]]:
-        """Return (candidates up to top_k, per_source_counts for reporting)."""
-        all_hits: List[SourceHit] = []
+    def generate(self, entry: BibEntry) -> tuple[list[SourceHit], dict[str, int]]:
+        """返回候选列表和每个数据源的命中数。"""
+        all_hits: list[SourceHit] = []
         per_source: dict[str, int] = {}
 
         for src in self.sources:
             fetcher = self._get_fetcher(src)
             if fetcher is None:
+                logger.debug("跳过未知数据源: %s", src)
+                per_source[src] = 0
                 continue
             try:
                 hits = fetcher.search(entry)
-            except Exception:
+            except Exception as exc:
+                logger.debug("数据源 %s 查询异常: %s", src, exc)
                 hits = []
             per_source[src] = len(hits)
             for h in hits:
                 all_hits.append(h)
-        # Deduplicate by (source, fetched_doi or fetched_title)
         seen = set()
         unique = []
         for h in all_hits:

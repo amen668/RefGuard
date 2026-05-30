@@ -1,5 +1,5 @@
-"""DecisionEngine: apply profile (match_threshold, gap_threshold), set status."""
-from typing import List, Optional, Tuple
+"""参考文献身份核验决策规则。"""
+from typing import Optional
 
 from refguard.models import BibEntry, SourceHit, ComparisonResult
 from refguard.config import ProfileConfig, get_profile
@@ -7,16 +7,14 @@ from refguard.config import ProfileConfig, get_profile
 
 def decide(
     entry: BibEntry,
-    candidates: List[SourceHit],
-    probabilities: List[float],
+    candidates: list[SourceHit],
+    probabilities: list[float],
     profile: ProfileConfig,
     explanations: Optional[dict] = None,
     best_hit: Optional[SourceHit] = None,
     best_idx: int = 0,
 ) -> ComparisonResult:
-    """
-    Apply profile thresholds and top-2 gap rule; return ComparisonResult.
-    """
+    """应用阈值和 Top-2 差距规则，返回比较结果。"""
     if not candidates:
         return ComparisonResult(
             entry_key=entry.key,
@@ -41,33 +39,25 @@ def decide(
     gap = p1 - p2
     issues = []
     if p1 >= profile.match_threshold:
-        status = "verified"
         is_match = True
         confidence = p1
     elif p1 < profile.match_threshold and gap < profile.gap_threshold:
-        status = "warning"
         is_match = False
         confidence = p1
         issues.append("top2_gap_small")
     else:
-        status = "warning" if p1 > 0.3 else "error"
         is_match = False
         confidence = p1
         if p1 <= 0.3:
             issues.append("low_confidence")
-    # Override: author/DOI mismatch -> likely hallucinated citation
+    # 作者完全不匹配且没有 DOI 支撑时，优先按高风险处理。
     if explanations:
         author_sim = explanations.get("author_sim")
         doi_match = explanations.get("doi_match")
         if author_sim is not None and (author_sim < 0.2) and (doi_match == 0 or doi_match is None):
-            status = "error"
             is_match = False
             if "author_mismatch" not in issues:
                 issues.append("author_mismatch")
-    # Field-level for report
-    title_match = getattr(best_hit, "_title_match", None)
-    author_match = getattr(best_hit, "_author_match", None)
-    year_match = getattr(best_hit, "_year_match", None)
     return ComparisonResult(
         entry_key=entry.key,
         is_match=is_match,
@@ -89,7 +79,7 @@ def decide(
 
 
 class DecisionEngine:
-    """Thin wrapper: get profile and call decide()."""
+    """按配置档封装决策规则。"""
 
     def __init__(self, profile_name: str = "balanced") -> None:
         self.profile = get_profile(profile_name)
@@ -97,8 +87,8 @@ class DecisionEngine:
     def run(
         self,
         entry: BibEntry,
-        candidates: List[SourceHit],
-        probabilities: List[float],
+        candidates: list[SourceHit],
+        probabilities: list[float],
         best_idx: int = 0,
         explanations: Optional[dict] = None,
     ) -> ComparisonResult:

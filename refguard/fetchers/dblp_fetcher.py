@@ -1,10 +1,10 @@
-"""DBLP fetcher: search(entry) -> List[SourceHit]. 1–2s delay, respect Retry-After."""
+"""DBLP 元数据源。"""
 import time
-from typing import Any, List, Optional
+from typing import Any
 
 import requests
 
-from refguard.models import BibEntry, SourceHit
+from refguard.models import SourceHit
 from refguard.core import settings
 from .base import BaseFetcher
 
@@ -14,32 +14,17 @@ class DBLPFetcher(BaseFetcher):
     source_name = "dblp"
 
     def __init__(self) -> None:
-        self._last = 0.0
-        self._timeout = getattr(settings, "request_timeout", 30)
-        self._delay = settings.dblp_rate_limit_delay
+        super().__init__(
+            rate_limit_delay=settings.dblp_rate_limit_delay,
+            timeout=getattr(settings, "request_timeout", 30),
+        )
 
-    def _wait(self) -> None:
-        elapsed = time.monotonic() - self._last
-        if elapsed < self._delay:
-            time.sleep(self._delay - elapsed)
-        self._last = time.monotonic()
-
-    def search(self, entry: BibEntry) -> List[SourceHit]:
-        if not entry.title:
-            return []
-        hits = self._search_by_title(entry.title, max_results=5)
-        for i, h in enumerate(hits):
-            h.rank = i + 1
-            h.retrieval_method = "title_search"
-            h.query = entry.title
-        return hits[:10]
-
-    def _search_by_title(self, title: str, max_results: int = 5) -> List[SourceHit]:
+    def search_by_title(self, title: str) -> list[SourceHit]:
         self._wait()
         try:
-            r = requests.get(
+            r = self._session.get(
                 self.BASE_URL,
-                params={"q": title, "format": "json", "h": max_results},
+                params={"q": title, "format": "json", "h": 5},
                 timeout=self._timeout,
                 headers={"User-Agent": "RefGuard/1.0"},
             )
@@ -54,8 +39,8 @@ class DBLPFetcher(BaseFetcher):
         except requests.RequestException:
             return []
 
-    def _parse_response(self, data: dict[str, Any]) -> List[SourceHit]:
-        out: List[SourceHit] = []
+    def _parse_response(self, data: dict[str, Any]) -> list[SourceHit]:
+        out: list[SourceHit] = []
         try:
             hits = data.get("result", {}).get("hits", {}).get("hit", [])
             if not isinstance(hits, list):

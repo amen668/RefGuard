@@ -1,4 +1,4 @@
-"""Fetchers: unified search(entry) -> List[SourceHit]."""
+"""数据源抓取器注册表。"""
 from .base import BaseFetcher
 from .crossref_fetcher import CrossrefFetcher
 from .arxiv_fetcher import ArxivFetcher
@@ -6,15 +6,19 @@ from .openalex_fetcher import OpenAlexFetcher
 from .semantic_scholar_fetcher import SemanticScholarFetcher
 from .dblp_fetcher import DBLPFetcher
 
+FETCHER_REGISTRY = {
+    "crossref": CrossrefFetcher,
+    "arxiv": ArxivFetcher,
+    "openalex": OpenAlexFetcher,
+    "semanticscholar": SemanticScholarFetcher,
+    "semantic_scholar": SemanticScholarFetcher,
+    "dblp": DBLPFetcher,
+}
+
+
 def get_fetcher(name: str, **kwargs) -> BaseFetcher | None:
-    registry = {
-        "crossref": CrossrefFetcher,
-        "arxiv": ArxivFetcher,
-        "openalex": OpenAlexFetcher,
-        "semanticscholar": SemanticScholarFetcher,
-        "dblp": DBLPFetcher,
-    }
-    cls = registry.get(name.lower())
+    """按名称创建抓取器，未知数据源返回 None。"""
+    cls = FETCHER_REGISTRY.get(name.lower())
     if cls is None:
         return None
     return cls(**kwargs)
@@ -26,5 +30,6 @@ __all__ = [
     "OpenAlexFetcher",
     "SemanticScholarFetcher",
     "DBLPFetcher",
+    "FETCHER_REGISTRY",
     "get_fetcher",
 ]

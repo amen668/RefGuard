@@ -1,4 +1,4 @@
-"""ComparisonResult: extended with match_probability, best_hit, explanations."""
+"""参考文献候选比较结果模型。"""
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -7,7 +7,7 @@ from .source_hit import SourceHit
 
 @dataclass
 class ComparisonResult:
-    """Unified comparison output: integrity decision + evidence."""
+    """单条参考文献的身份核验结论与证据。"""
     entry_key: str
     is_match: bool
     confidence: float
@@ -18,7 +18,7 @@ class ComparisonResult:
     best_hit: Optional[SourceHit] = None
     top_hits: list[SourceHit] = field(default_factory=list)
     explanations: Optional[dict[str, Any]] = None
-    # Legacy/field-level (for report)
+    # 保留旧字段，避免破坏既有 JSON 消费方。
     title_match: bool = False
     title_similarity: float = 0.0
     bib_title: str = ""

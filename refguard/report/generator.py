@@ -1,4 +1,4 @@
-"""ReportGenerator: JSON + Markdown + run_metadata; optional only_used.bib."""
+"""生成 JSON、Markdown 和可选的 only_used.bib 报告。"""
 import json
 from pathlib import Path
 from typing import Any, List, Optional
@@ -7,6 +7,7 @@ from refguard.models import (
     EntryReport,
     ProjectReport,
     RunMetadata,
+    resolve_report_status,
 )
 
 
@@ -25,7 +26,7 @@ def _as_serializable(obj: Any) -> Any:
 
 
 class ReportGenerator:
-    """Generate JSON report, Markdown report, and optional only_used.bib."""
+    """只负责报告序列化，不参与核验业务判断。"""
 
     def __init__(self) -> None:
         self.entry_reports: List[EntryReport] = []
@@ -51,13 +52,10 @@ class ReportGenerator:
         total = len(self.entry_reports)
         verified = warning = error = 0
         for r in self.entry_reports:
-            if not r.comparison:
-                error += 1
-            elif (r.comparison.issues or []) and "author_mismatch" in r.comparison.issues:
-                error += 1
-            elif r.comparison.is_match:
+            status = resolve_report_status(r.comparison)
+            if status == "verified":
                 verified += 1
-            elif r.comparison.match_probability >= 0.3:
+            elif status == "warning":
                 warning += 1
             else:
                 error += 1
@@ -87,13 +85,10 @@ class ReportGenerator:
                     "authors": comp.best_hit.fetched_authors,
                     "year": comp.best_hit.fetched_year,
                 }
-            if comp and (comp.issues or []) and "author_mismatch" in comp.issues:
-                status = "error"
-            else:
-                status = "verified" if (comp and comp.is_match) else ("warning" if (comp and comp.match_probability >= 0.3) else "error")
+            status = resolve_report_status(comp)
             entries_out.append({
                 "key": er.entry.key,
-                "status": status,
+                "status": status.value,
                 "match_probability": comp.match_probability if comp else 0.0,
                 "best_source": comp.source if comp else None,
                 "best_hit": best_hit,
@@ -125,11 +120,11 @@ class ReportGenerator:
         lines = [
             "## 摘要",
             f"- 总条目: {proj.summary['total']}",
-            f"- Verified: {proj.summary['verified']} | Warning: {proj.summary['warning']} | Error: {proj.summary['error']}",
+            f"- 已核验: {proj.summary['verified']} | 需复核: {proj.summary['warning']} | 错误: {proj.summary['error']}",
         ]
         if proj.run_metadata:
-            lines.append(f"- Profile: {getattr(proj.run_metadata, 'profile', '')}")
-            lines.append(f"- Sources: {', '.join(getattr(proj.run_metadata, 'sources', []))}")
+            lines.append(f"- 配置档: {getattr(proj.run_metadata, 'profile', '')}")
+            lines.append(f"- 数据源: {', '.join(getattr(proj.run_metadata, 'sources', []))}")
         lines.append("")
         if proj.duplicate_groups:
             lines.append("## 重复组")
@@ -140,11 +135,16 @@ class ReportGenerator:
             lines.append("")
         lines.append("## 有问题条目")
         for er in proj.entry_reports:
-            if not er.comparison or er.comparison.is_match:
+            status = resolve_report_status(er.comparison)
+            if status == "verified":
                 continue
             comp = er.comparison
-            status_label = "error" if ((comp.issues or []) and "author_mismatch" in comp.issues) or comp.match_probability < 0.3 else "warning"
-            lines.append(f"### {er.entry.key} ({status_label})")
+            if comp is None:
+                lines.append(f"### {er.entry.key} ({status.value})")
+                lines.append("- 问题: 未生成核验结果")
+                lines.append("")
+                continue
+            lines.append(f"### {er.entry.key} ({status.value})")
             lines.append(f"- 最佳候选: {comp.source} (P={comp.match_probability:.2f})")
             lines.append(f"- 问题: {', '.join(comp.issues)}")
             if comp.best_hit and comp.best_hit.fetched_bibtex:
@@ -155,9 +155,8 @@ class ReportGenerator:
             f.write("\n".join(lines))
 
     def write_only_used_bib(self, path: str | Path, entries: List[Any], used_keys: set) -> None:
-        """Write .bib containing only entries whose key is in used_keys."""
-        from refguard.parsers import BibParser
-        # We don't have raw content; emit minimal bib from entry list
+        """写出仅包含已引用条目的 .bib 文件。"""
+        # 解析器不会保留完整原文时，退回到最小 BibTeX。
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             for e in entries:
