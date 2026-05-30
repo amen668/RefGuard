@@ -1,4 +1,4 @@
-"""LaTeX parser for citation extraction."""
+"""LaTeX 引用命令解析器。"""
 import re
 from pathlib import Path
 from typing import Optional
@@ -7,7 +7,7 @@ from refguard.models import CitationContext
 
 
 class TexParser:
-    """Extract \\cite keys and context from .tex files."""
+    """从 .tex 文件提取引用键和上下文。"""
 
     CITE_REGEX = re.compile(
         r"\\(cite[a-z]*)\*?\s*(?:\[[^\]]*\])?\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}",
@@ -24,7 +24,7 @@ class TexParser:
     def parse_file(self, filepath: str) -> dict[str, list[CitationContext]]:
         path = Path(filepath)
         if not path.exists():
-            raise FileNotFoundError(f"TeX file not found: {filepath}")
+            raise FileNotFoundError(f"找不到 TeX 文件：{filepath}")
         with open(path, "r", encoding="utf-8", errors="replace") as f:
             content = f.read()
         self.current_filepath = filepath

@@ -1,4 +1,4 @@
-"""Usage checker: cited keys, missing citations, unused entries (Mode B)."""
+"""LaTeX 引用使用检查：已引用、缺失引用和未使用条目。"""
 from typing import List
 
 from refguard.models import BibEntry, CitationContext

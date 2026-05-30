@@ -1,8 +1,8 @@
-"""Custom exceptions for RefGuard."""
+"""RefGuard 自定义异常。"""
 
 
 class RefGuardException(Exception):
-    """Base exception for RefGuard."""
+    """RefGuard 基础异常。"""
 
     def __init__(self, message: str, details: dict | None = None):
         self.message = message
@@ -11,7 +11,7 @@ class RefGuardException(Exception):
 
 
 class FetcherException(RefGuardException):
-    """Raised by fetchers."""
+    """数据源查询异常。"""
 
     def __init__(self, message: str, source: str, details: dict | None = None):
         self.source = source
@@ -19,27 +19,27 @@ class FetcherException(RefGuardException):
 
 
 class ParserException(RefGuardException):
-    """Raised by parsers."""
+    """解析异常。"""
 
 
 class ValidationException(RefGuardException):
-    """Raised during validation."""
+    """校验异常。"""
 
 
 class RateLimitException(FetcherException):
-    """Rate limit exceeded; retry_after when provided by server."""
+    """请求频率超限。"""
 
     def __init__(self, source: str, retry_after: int | None = None):
         self.retry_after = retry_after
-        message = f"Rate limit exceeded for {source}"
+        message = f"{source} 请求频率超限"
         if retry_after:
-            message += f". Retry after {retry_after} seconds"
+            message += f"，请在 {retry_after} 秒后重试"
         super().__init__(message, source)
 
 
 class TimeoutException(FetcherException):
-    """Request timed out."""
+    """请求超时异常。"""
 
     def __init__(self, source: str, timeout: int):
-        message = f"Request to {source} timed out after {timeout}s"
+        message = f"{source} 请求在 {timeout} 秒后超时"
         super().__init__(message, source)

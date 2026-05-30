@@ -1,11 +1,11 @@
-"""BibEntry: unified bibliography entry model."""
+"""统一的参考文献条目模型。"""
 from dataclasses import dataclass, field
 from typing import Optional
 
 
 @dataclass
 class BibEntry:
-    """Parsed bibliography entry with raw_bibtex and authors list for fusion."""
+    """解析后的参考文献条目，供召回和融合判断使用。"""
     key: str
     entry_type: str
     title: str = ""

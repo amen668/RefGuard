@@ -1,4 +1,4 @@
-"""EntryReport, ProjectReport, RunMetadata for reports and API."""
+"""报告和接口使用的数据结构。"""
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -8,7 +8,7 @@ from .comparison import ComparisonResult
 
 @dataclass
 class RunMetadata:
-    """Reproducibility: profile, sources, version."""
+    """用于复现实验的运行配置。"""
     profile: str = ""
     sources: list[str] = field(default_factory=list)
     top_k_candidates: int = 5
@@ -19,16 +19,16 @@ class RunMetadata:
 
 @dataclass
 class UsageResult:
-    """Mode B: usage for one entry."""
+    """单个 BibTeX 条目的引用使用情况。"""
     key: str
     is_cited: bool
     citation_count: int
-    contexts: list[Any] = field(default_factory=list)  # CitationContext[]
+    contexts: list[Any] = field(default_factory=list)
 
 
 @dataclass
 class EntryReport:
-    """Single entry report: entry + comparison + optional usage."""
+    """单条参考文献报告。"""
     entry: BibEntry
     comparison: Optional[ComparisonResult] = None
     usage: Optional[UsageResult] = None
@@ -36,8 +36,8 @@ class EntryReport:
 
 @dataclass
 class ProjectReport:
-    """Full run report (JSON / MD schema)."""
-    summary: dict[str, int]  # total, verified, warning, error
+    """一次完整核验的报告结构。"""
+    summary: dict[str, int]
     entry_reports: list[EntryReport] = field(default_factory=list)
     duplicate_groups: list[Any] = field(default_factory=list)
     missing_citations: list[str] = field(default_factory=list)

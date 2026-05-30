@@ -1,2 +1,2 @@
-"""RefGuard: Reference Integrity & Citation Quality Checker."""
+"""RefGuard：参考文献身份核验与引用质量检查工具。"""
 __version__ = "0.1.0"

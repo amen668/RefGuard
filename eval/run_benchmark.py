@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-# Add project root for refguard
+# 将项目根目录加入导入路径。
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from eval.benchmark_utils import record_to_bibtex

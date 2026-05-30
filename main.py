@@ -1,4 +1,4 @@
-"""RefGuard API server entry (uvicorn)."""
+"""RefGuard 接口服务入口。"""
 import uvicorn
 from refguard.api import create_app
 from refguard.core import settings

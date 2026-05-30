@@ -1,11 +1,11 @@
-"""CitationContext: citation location and context."""
+"""LaTeX 引用位置和上下文。"""
 from dataclasses import dataclass
 from typing import Optional
 
 
 @dataclass
 class CitationContext:
-    """Citation with its context for Mode B usage checks."""
+    """单次引用命令及其前后文。"""
     key: str
     line_number: int
     command: str

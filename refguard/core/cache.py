@@ -1,4 +1,4 @@
-"""Cache for DOI lookups and high-reuse queries (thread-safe)."""
+"""用于 DOI 查询和高频检索的线程安全缓存。"""
 import hashlib
 import json
 import threading
@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 
 
 class CacheManager:
-    """Thread-safe TTL cache."""
+    """线程安全的 TTL 缓存。"""
 
     def __init__(self) -> None:
         self._cache: Optional[TTLCache] = None

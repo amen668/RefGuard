@@ -1,8 +1,8 @@
-"""FeatureBuilder: BibEntry + SourceHit -> MatchFeatures (for fusion and explanations)."""
+"""将参考文献条目和候选结果转换为融合特征。"""
 from refguard.models import BibEntry, SourceHit, MatchFeatures
 from refguard.utils.normalizer import TextNormalizer
 
-# Source prior: DOI/arxiv_id lookup > title search. Same as in match_features.
+# 强标识查询的先验高于题名检索。
 SOURCE_PRIOR = {
     ("crossref", "doi"): 0.95,
     ("crossref", "title_search"): 0.7,
@@ -22,7 +22,7 @@ def _default_prior(source: str, method: str) -> float:
 
 
 class FeatureBuilder:
-    """Build MatchFeatures from (BibEntry, SourceHit) for fusion input and explanations."""
+    """构造融合模型输入特征和解释字段。"""
 
     @staticmethod
     def build(entry: BibEntry, hit: SourceHit, rank: int, total_candidates: int) -> MatchFeatures:
@@ -98,7 +98,7 @@ def _author_similarity(bib_list: list, hit_list: list) -> float:
     return inter / union if union else 0.0
 
 
-# Re-export for fusion model
+# 供融合模型按固定顺序取特征。
 FEATURE_NAMES = [
     "title_sim", "author_sim", "year_match", "doi_match", "id_match",
     "source_prior", "rank_feature", "title_length", "author_count",

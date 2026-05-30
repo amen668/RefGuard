@@ -1,4 +1,4 @@
-"""BibTeX parser with extended BibEntry (raw_bibtex, authors[], venue)."""
+"""BibTeX 解析器，补充原始条目、作者列表和来源字段。"""
 import re
 from pathlib import Path
 from typing import Optional
@@ -11,7 +11,7 @@ from refguard.models import BibEntry
 
 
 class BibParser:
-    """Parse .bib into list[BibEntry] with raw_bibtex and authors list."""
+    """将 .bib 内容解析为 BibEntry 列表。"""
 
     ARXIV_PATTERNS = [
         r'(\d{4}\.\d{4,5}(?:v\d+)?)',
@@ -32,7 +32,7 @@ class BibParser:
     def parse_file(self, filepath: str) -> list[BibEntry]:
         path = Path(filepath)
         if not path.exists():
-            raise FileNotFoundError(f"Bib file not found: {filepath}")
+            raise FileNotFoundError(f"找不到 Bib 文件：{filepath}")
         with open(path, "r", encoding="utf-8", errors="replace") as f:
             content = f.read()
         return self.parse_content(content)
@@ -43,7 +43,7 @@ class BibParser:
         try:
             bib_database = bibtexparser.loads(content, parser=parser)
         except Exception as e:
-            raise ValueError(f"Failed to parse bib content: {e}") from e
+            raise ValueError(f"Bib 内容解析失败：{e}") from e
         self.entries = []
         for entry in bib_database.entries:
             bib_entry = self._convert_entry(entry)

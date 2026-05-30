@@ -1,8 +1,8 @@
-"""Workflow: enabled sources and order (strong id first, then title search)."""
+"""数据源启用配置和默认顺序。"""
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-# Default source order: DOI/arXiv ID lookups first, then title search
+# 默认顺序优先使用 DOI 和 arXiv ID 等强标识。
 DEFAULT_SOURCES = [
     "crossref",
     "openalex",
@@ -15,7 +15,7 @@ DEFAULT_SOURCES = [
 @dataclass
 class WorkflowConfig:
     sources: List[str] = field(default_factory=list)
-    enabled: Optional[List[str]] = None  # if None, use all in sources
+    enabled: Optional[List[str]] = None
 
     def get_enabled_sources(self) -> List[str]:
         src = self.sources or DEFAULT_SOURCES.copy()

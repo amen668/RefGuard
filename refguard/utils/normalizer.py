@@ -1,4 +1,4 @@
-"""Text normalization for comparison."""
+"""用于相似度比较的文本规范化工具。"""
 import re
 import unicodedata
 from unidecode import unidecode

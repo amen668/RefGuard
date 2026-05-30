@@ -1,4 +1,4 @@
-"""Duplicate entry detector."""
+"""重复参考文献条目检测。"""
 from dataclasses import dataclass
 from typing import List, Tuple
 
@@ -8,7 +8,7 @@ from refguard.utils.normalizer import TextNormalizer
 
 @dataclass
 class DuplicateGroup:
-    """Group of potentially duplicate entries."""
+    """疑似重复条目组。"""
     entries: List[BibEntry]
     similarity_score: float
     reason: str
@@ -57,11 +57,11 @@ class DuplicateDetector:
         t2 = TextNormalizer.normalize_for_comparison(entry2.title)
         title_sim = TextNormalizer.similarity_ratio(t1, t2)
         if title_sim >= self.TITLE_SIMILARITY_THRESHOLD:
-            return title_sim, "Very similar titles"
+            return title_sim, "题名高度相似"
         author_sim = self._author_similarity(entry1, entry2)
         combined = 0.7 * title_sim + 0.3 * author_sim
         if combined >= self.COMBINED_SIMILARITY_THRESHOLD:
-            return combined, f"Similar title ({title_sim:.0%}) and authors ({author_sim:.0%})"
+            return combined, f"题名相似度 {title_sim:.0%}，作者相似度 {author_sim:.0%}"
         return combined, ""
 
     def _author_similarity(self, entry1: BibEntry, entry2: BibEntry) -> float:
@@ -94,7 +94,7 @@ class DuplicateDetector:
                 sims.append(TextNormalizer.similarity_ratio(t1, t2))
         avg = sum(sims) / len(sims) if sims else 0.0
         if avg >= 0.95:
-            return "Nearly identical titles"
+            return "题名几乎相同"
         if avg >= 0.85:
-            return "Very similar titles"
-        return "Similar titles and authors"
+            return "题名高度相似"
+        return "题名和作者相似"

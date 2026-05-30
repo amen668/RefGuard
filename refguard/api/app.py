@@ -1,4 +1,4 @@
-"""FastAPI app: /api/v1/verify/bib, /api/v1/verify/project, /api/v1/sources/status."""
+"""接口应用入口。"""
 from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -18,7 +18,7 @@ def create_app() -> FastAPI:
     return app
 
 
-# --- Schemas ---
+# 请求和响应结构。
 class VerifyBibOptions(BaseModel):
     check_duplicates: bool = True
     top_k_candidates: int = 8
@@ -42,7 +42,7 @@ class SourcesStatusResponse(BaseModel):
     sources: list
 
 
-# --- Routes ---
+# 路由定义。
 from fastapi import APIRouter
 verify_router = APIRouter()
 sources_router = APIRouter()
@@ -61,7 +61,7 @@ def post_verify_bib(req: VerifyBibRequest) -> dict:
             "run_metadata": data.get("run_metadata"),
         }
     except Exception as e:
-        logger.exception("verify/bib failed")
+        logger.exception("BibTeX 核验失败")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -79,7 +79,7 @@ def post_verify_project(req: VerifyProjectRequest) -> dict:
         report = svc.verify_project(req.bib_content, tex_paths=req.tex_paths or [], check_usage=req.check_usage)
         return report.to_json()
     except Exception as e:
-        logger.exception("verify/project failed")
+        logger.exception("项目核验失败")
         raise HTTPException(status_code=500, detail=str(e))
 
 

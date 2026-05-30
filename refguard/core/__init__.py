@@ -1,4 +1,4 @@
-"""Core: config, logging, exceptions, and cache."""
+"""核心模块导出。"""
 from .config import settings
 from .exceptions import (
     RefGuardException,

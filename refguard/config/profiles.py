@@ -1,4 +1,4 @@
-"""Profile presets: strict, balanced, lenient."""
+"""核验配置档预设。"""
 from dataclasses import dataclass
 from typing import Literal
 

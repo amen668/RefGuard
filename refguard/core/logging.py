@@ -1,4 +1,4 @@
-"""Logging for RefGuard."""
+"""RefGuard 日志配置。"""
 import logging
 import sys
 from pathlib import Path
@@ -8,14 +8,14 @@ from .config import settings
 
 
 class TextFormatter(logging.Formatter):
-    """Console formatter."""
+    """控制台日志格式化器。"""
 
     def format(self, record: logging.LogRecord) -> str:
         return super().format(record)
 
 
 def setup_logging() -> None:
-    """Configure logging from settings."""
+    """根据配置初始化日志。"""
     level = getattr(logging, settings.log_level)
     logging.getLogger().setLevel(level)
     if not logging.getLogger().handlers:

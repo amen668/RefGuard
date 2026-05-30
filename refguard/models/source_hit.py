@@ -1,14 +1,14 @@
-"""SourceHit: single candidate from a data source (unified fetcher return type)."""
+"""数据源返回的单个候选结果。"""
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
 
 @dataclass
 class SourceHit:
-    """One candidate hit from a source; all fetchers return List[SourceHit]."""
+    """所有数据源抓取器统一返回的候选结构。"""
     source: str
     confidence_raw: float
-    retrieval_method: str  # 'doi', 'arxiv_id', 'title_search'
+    retrieval_method: str
     query: str
     rank: int
     fetched_title: str = ""
