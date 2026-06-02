@@ -36,9 +36,17 @@ BLUE, ORANGE, GREEN = "#3b6ea5", "#d9822b", "#4c9a6b"
 
 
 def fig_doi_ra():
-    # 来自抽样统计（可按需更新）。
-    ra = {"Crossref": 90.4, "DataCite": 6.8, "CNKI": 1.2,
-          "JaLC": 0.8, "Airiti": 0.4, "ISTIC": 0.4}
+    # 实测分布：由 scripts/compute_doi_ra.py 对全部真实 DOI 经 doi.org/ra 核算得到。
+    dist_path = Path("data/doi_ra_distribution.json")
+    if dist_path.exists():
+        d = json.loads(dist_path.read_text(encoding="utf-8"))
+        pct = d["distribution_pct"]
+        ra = {k: round(v, 1) for k, v in pct.items() if k != "DOI does not exist"}
+        non_cross = d["non_crossref_pct"]
+    else:  # 回退（应先运行 compute_doi_ra.py）
+        ra = {"Crossref": 86.0, "DataCite": 10.0, "Airiti": 1.5,
+              "CNKI": 1.2, "ISTIC": 0.9, "JaLC": 0.5}
+        non_cross = 14.0
     names = list(ra.keys())
     vals = list(ra.values())
     colors = [BLUE] + [ORANGE] * (len(names) - 1)
@@ -47,7 +55,7 @@ def fig_doi_ra():
     for b, v in zip(bars, vals):
         ax.text(b.get_x() + b.get_width() / 2, v + 1, f"{v}%", ha="center", fontsize=9)
     ax.set_ylabel("占比 (%)")
-    ax.set_title("真实文献 DOI 注册商分布（非 Crossref 约 9.6%）")
+    ax.set_title(f"真实文献 DOI 注册商分布（非 Crossref 约 {non_cross:.1f}%）")
     ax.set_ylim(0, 100)
     ax.spines[["top", "right"]].set_visible(False)
     fig.tight_layout()

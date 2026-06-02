@@ -1,0 +1,24 @@
+{
+  "n_real_doi": 1937,
+  "n_resolved": 1937,
+  "n_error": 0,
+  "distribution": {
+    "Crossref": 1665,
+    "DataCite": 193,
+    "Airiti": 29,
+    "CNKI": 23,
+    "ISTIC": 17,
+    "JaLC": 9,
+    "DOI does not exist": 1
+  },
+  "distribution_pct": {
+    "Crossref": 85.96,
+    "DataCite": 9.96,
+    "Airiti": 1.5,
+    "CNKI": 1.19,
+    "ISTIC": 0.88,
+    "JaLC": 0.46,
+    "DOI does not exist": 0.05
+  },
+  "non_crossref_pct": 14.04
+}
