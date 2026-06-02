@@ -1,0 +1,37 @@
+{
+  "weights": [
+    0.4805927635969943,
+    0.43935646422975244,
+    0.7824935246531016,
+    5.718938283720961,
+    0.0,
+    1.2672978460027977,
+    -1.1305322132369646,
+    -0.16317081601593947,
+    -0.28844859603058687,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.11928843183141288
+  ],
+  "bias": -3.367437762480224,
+  "feature_names": [
+    "title_sim",
+    "author_sim",
+    "year_match",
+    "doi_match",
+    "id_match",
+    "source_prior",
+    "rank_feature",
+    "title_length",
+    "author_count",
+    "has_doi",
+    "has_arxiv_id",
+    "url_match",
+    "venue_sim",
+    "source_score"
+  ],
+  "trained_on": "dev",
+  "n_train": 500
+}

@@ -16,10 +16,22 @@ def main() -> None:
     parser.add_argument("--input", "-i", default="data/refguard_input.jsonl",
                         help="基准数据路径，默认 data/refguard_input.jsonl")
     parser.add_argument("--out", "-o", default="./eval_report", help="评测报告输出目录")
-    parser.add_argument("--profile", "-p", default="balanced", choices=["strict", "balanced", "lenient"])
+    parser.add_argument("--profile", "-p", default="balanced",
+                        choices=["strict", "balanced", "lenient", "adaptive"])
     parser.add_argument("--limit", "-n", type=int, default=None, help="最多评测多少条，默认全部")
-    parser.add_argument("--sources", "-s", default="crossref,openalex,arxiv,dblp,semanticscholar",
+    parser.add_argument("--sources", "-s", default="crossref,openalex,arxiv,dblp,semanticscholar,doicn",
                         help="逗号分隔的数据源名称")
+    parser.add_argument("--shuffle", action="store_true",
+                        help="抽样前先打乱（配合 --limit 取代表性样本，避免按采集顺序取到单一切片）")
+    parser.add_argument("--seed", type=int, default=20260601, help="--shuffle 的随机种子，保证可复现")
+    parser.add_argument("--model-dir", default=None,
+                        help="加载训练好的 fusion_model.json 的目录；缺省用启发式默认权重")
+    parser.add_argument("--split", default=None, choices=["dev", "test"],
+                        help="只评测该划分（需配合 --split-source 读取 split 字段）")
+    parser.add_argument("--split-source", default="data/citation_dataset_final_v4.json",
+                        help="带 split 字段的源数据集，用于 --split 过滤")
+    parser.add_argument("--resume", action="store_true",
+                        help="从 <out>/eval_partial.json 断点续跑，跳过已完成的前 N 条（长跑被杀不丢进度）")
     args = parser.parse_args()
 
     input_path = Path(args.input)
@@ -35,6 +47,20 @@ def main() -> None:
                 continue
             records.append(json.loads(line))
 
+    if args.split:
+        split_src = Path(args.split_source)
+        if not split_src.exists():
+            print(f"错误：--split 需要 --split-source，但找不到 {split_src}", file=sys.stderr)
+            sys.exit(1)
+        split_data = json.loads(split_src.read_text(encoding="utf-8"))
+        keep = {r["id"] for r in split_data if r.get("split") == args.split}
+        records = [r for r in records if r.get("paper_id") in keep]
+        print(f"按 split={args.split} 过滤后剩 {len(records)} 条", file=sys.stderr)
+
+    if args.shuffle:
+        import random
+        random.Random(args.seed).shuffle(records)
+
     if args.limit:
         records = records[: args.limit]
 
@@ -46,11 +72,31 @@ def main() -> None:
     from refguard.core import setup_logging
     setup_logging()
 
-    sources = [s.strip() for s in args.sources.split(",")]
-    svc = VerificationService(sources=sources, profile_name=args.profile)
+    # 行缓冲：重定向到文件时 tail -f 能实时看到逐条进度。
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+    except (AttributeError, ValueError):
+        pass
 
+    sources = [s.strip() for s in args.sources.split(",")]
+    svc = VerificationService(sources=sources, profile_name=args.profile, model_dir=args.model_dir)
+
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    n_total = len(records)
     results = []
+    resume_from = 0
+    if args.resume:
+        partial_path = out_dir / "eval_partial.json"
+        if partial_path.exists():
+            results = json.loads(partial_path.read_text(encoding="utf-8"))
+            resume_from = len(results)
+            print(f"断点续跑：已完成 {resume_from} 条，从第 {resume_from + 1} 条继续", flush=True)
+    print(f"开始评测 {n_total} 条 | profile={args.profile} | sources={','.join(sources)}", flush=True)
     for i, rec in enumerate(records):
+        if i < resume_from:
+            continue
         entry_key = rec.get("paper_id", "ref") + f"_{i}"
         bib_content = record_to_bibtex(rec, entry_key=entry_key)
         report_gen = svc.verify_bib(bib_content, check_duplicates=False)
@@ -79,6 +125,13 @@ def main() -> None:
             "match_probability": prob,
             "correct": gt_hallucinated == pred_hallucinated,
         })
+        if (i + 1) % 10 == 0 or (i + 1) == n_total:
+            ncorrect = sum(1 for r in results if r["correct"])
+            print(f"  [{i + 1}/{n_total}] 累计正确 {ncorrect}/{i + 1} "
+                  f"(running acc {ncorrect / (i + 1):.3f})", flush=True)
+            # 断点保护：定期落盘已完成的逐条结果，崩溃不全丢。
+            with open(out_dir / "eval_partial.json", "w", encoding="utf-8") as f:
+                json.dump(results, f, ensure_ascii=False)
 
     # 正类定义为幻觉文献。
     tp = sum(1 for r in results if r["ground_truth_hallucinated"] and r["predicted_hallucinated"])
@@ -102,9 +155,6 @@ def main() -> None:
         "profile": args.profile,
         "sources": sources,
     }
-
-    out_dir = Path(args.out)
-    out_dir.mkdir(parents=True, exist_ok=True)
 
     report_json = {
         "summary": summary,

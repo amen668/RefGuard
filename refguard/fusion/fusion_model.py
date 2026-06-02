@@ -41,18 +41,22 @@ class FusionModel:
         except Exception:
             pass
 
+    def predict_proba_matrix(self, X: np.ndarray) -> np.ndarray:
+        """对原始特征矩阵直接打分（供消融/单源分析复用，避免构造 MatchFeatures）。"""
+        X = np.asarray(X, dtype=np.float64)
+        if X.ndim == 1:
+            X = X[None, :]
+        if X.shape[1] < len(self._weights):
+            X = np.pad(X, ((0, 0), (0, len(self._weights) - X.shape[1])))
+        logit = X @ self._weights[: X.shape[1]] + self._bias
+        return 1.0 / (1.0 + np.exp(-np.clip(logit, -20, 20)))
+
     def predict_proba(self, features_list: List[MatchFeatures]) -> List[float]:
         """返回每个特征向量的匹配概率。"""
         if not features_list:
             return []
         X = np.array([f.to_vector() for f in features_list], dtype=np.float64)
-        # 特征维度不足时补零，保持旧模型兼容。
-        if X.shape[1] < len(self._weights):
-            X = np.pad(X, ((0, 0), (0, len(self._weights) - X.shape[1])))
-        logit = X @ self._weights[: X.shape[1]] + self._bias
-        # 当前权重已经在 logit 空间，直接做 sigmoid。
-        p = 1.0 / (1.0 + np.exp(-np.clip(logit, -20, 20)))
-        return p.tolist()
+        return self.predict_proba_matrix(X).tolist()
 
     def predict_and_explain(
         self, entry: BibEntry, candidates: List[SourceHit], top_k: int = 5

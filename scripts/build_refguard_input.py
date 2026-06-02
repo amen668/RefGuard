@@ -30,7 +30,7 @@ def clean_text(value: Any) -> str:
 
 def normalize_year(value: Any) -> int | None:
     text = clean_text(value)
-    match = re.search(r"(18|19|20)\d{2}", text)
+    match = re.search(r"(1[6-9]|20)\d{2}", text)
     return int(match.group(0)) if match else None
 
 

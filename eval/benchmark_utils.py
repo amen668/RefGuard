@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
 """将基准数据记录转换为 RefGuard 可核验的最小 BibTeX。"""
+
+# doc_type → BibTeX 条目类型，使解析后的 entry_type 携带文献类型，
+# 供决策模块的自适应阈值识别书籍/学位论文/技术报告等非标准文献。
+_DOC_TYPE_TO_BIB = {
+    "journal": "article",
+    "conference": "inproceedings",
+    "preprint": "article",
+    "book": "book",
+    "thesis": "phdthesis",
+    "technical_report": "techreport",
+}
+
+
 def _escape_bibtex(s: str) -> str:
     """转义 BibTeX 字段值中的特殊字符。"""
     if not s:
@@ -31,7 +44,9 @@ def record_to_bibtex(record: dict, entry_key: str = "ref") -> str:
     title = _escape_bibtex(title)
     author = _escape_bibtex(author)
 
-    lines = [f"@article{{{entry_key},"]
+    doc_type = (record.get("meta") or {}).get("doc_type")
+    bib_type = _DOC_TYPE_TO_BIB.get(doc_type, "article")
+    lines = [f"@{bib_type}{{{entry_key},"]
     lines.append(f"  title = {{{title}}},")
     lines.append(f"  author = {{{author}}},")
     if year:

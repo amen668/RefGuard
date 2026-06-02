@@ -3,12 +3,14 @@ from dataclasses import dataclass, field
 from typing import List, Optional
 
 # 默认顺序优先使用 DOI 和 arXiv ID 等强标识。
+# doicn（DOI 内容协商）跨注册商解析非标准与中文文献的 DOI（DataCite/Airiti 等）。
 DEFAULT_SOURCES = [
     "crossref",
     "openalex",
     "arxiv",
     "semanticscholar",
     "dblp",
+    "doicn",
 ]
 
 

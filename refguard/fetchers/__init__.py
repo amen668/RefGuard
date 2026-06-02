@@ -5,6 +5,7 @@ from .arxiv_fetcher import ArxivFetcher
 from .openalex_fetcher import OpenAlexFetcher
 from .semantic_scholar_fetcher import SemanticScholarFetcher
 from .dblp_fetcher import DBLPFetcher
+from .doi_cn_fetcher import DOIContentNegotiationFetcher
 
 FETCHER_REGISTRY = {
     "crossref": CrossrefFetcher,
@@ -13,6 +14,7 @@ FETCHER_REGISTRY = {
     "semanticscholar": SemanticScholarFetcher,
     "semantic_scholar": SemanticScholarFetcher,
     "dblp": DBLPFetcher,
+    "doicn": DOIContentNegotiationFetcher,
 }
 
 
@@ -30,6 +32,7 @@ __all__ = [
     "OpenAlexFetcher",
     "SemanticScholarFetcher",
     "DBLPFetcher",
+    "DOIContentNegotiationFetcher",
     "FETCHER_REGISTRY",
     "get_fetcher",
 ]

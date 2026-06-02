@@ -14,6 +14,7 @@ SOURCE_PRIOR = {
     ("semanticscholar", "arxiv_id"): 0.85,
     ("semanticscholar", "title_search"): 0.6,
     ("dblp", "title_search"): 0.6,
+    ("doicn", "doi"): 0.9,
 }
 
 
@@ -83,6 +84,10 @@ def _norm_doi(s: str) -> str:
     for p in ("https://doi.org/", "http://doi.org/", "doi:"):
         if s.startswith(p):
             s = s[len(p):]
+    # 去掉 query/fragment，使带链接残留的 DOI 仍能与干净 DOI 比对相等。
+    for sep in ("?", "#"):
+        if sep in s:
+            s = s.split(sep, 1)[0]
     return s
 
 

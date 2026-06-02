@@ -41,6 +41,7 @@ eval_report_*/
 tmp_eval_check/
 tmp_eval_*/
 *.log
+logs_*.out
 
 # 测试与覆盖率
 .pytest_cache/
@@ -62,6 +63,25 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
-# 可选：模型/缓存数据（若本地训练或大文件）
-# fusion_models/
-# .cache/
+# 数据采集中间产物与生成物（许可核查通过前不入库）
+data/staging/
+data/citation_dataset_final_v4.json
+data/refguard_input.jsonl
+data/refguard_input_summary.json
+
+# 模型与缓存：旧实验模型整目录忽略；最终模型只保留权重 json，
+# 派生特征/消融缓存（*.jsonl）不入库
+fusion_models/
+fusion_models_nodoi/
+fusion_models_nodoi6/*
+!fusion_models_nodoi6/fusion_model.json
+.cache/
+
+# 论文写作产物（未发表，不入公开仓库）
+*.docx
+~$*.docx
+paper_*.md
+scripts/build_revised_docx.py
+
+# 配图为生成物（make_figures.py 可重跑）
+figures/

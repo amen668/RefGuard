@@ -4,6 +4,57 @@ from typing import Optional
 from refguard.models import BibEntry, SourceHit, ComparisonResult
 from refguard.config import ProfileConfig, get_profile
 
+# 非标准文献类型（书籍/学位论文/技术报告等），公开元数据源覆盖较弱。
+NONSTANDARD_TYPES = {
+    "book", "inbook", "incollection", "booklet", "manual",
+    "phdthesis", "mastersthesis", "thesis", "techreport", "report",
+}
+
+
+def _has_cjk(text: str) -> bool:
+    """题名是否含中日韩文字，用于识别中文文献。"""
+    return any("一" <= ch <= "鿿" for ch in (text or ""))
+
+
+def adaptive_threshold(
+    profile: ProfileConfig,
+    entry: BibEntry,
+    candidates: list[SourceHit],
+    explanations: Optional[dict],
+) -> float:
+    """按可获得证据的强度动态计算判定阈值。
+
+    设计原则：阈值随**证据强度**浮动，而非随字段是否存在浮动（后者会退化为
+    has_doi 之类的构造捷径）。证据越强/越互相佐证，越容易判定为真实（降阈值）；
+    作者严重不符则抬高门槛。非标准文献仅在题名强匹配时适度放宽，补偿其在公开
+    源中的覆盖劣势，避免误伤真实但难检索的条目。
+    """
+    thr = profile.match_threshold
+    ex = explanations or {}
+    doi_match = ex.get("doi_match") or 0
+    author_sim = ex.get("author_sim")
+    title_sim = ex.get("title_sim") or 0.0
+    year_match = ex.get("year_match") or 0.0
+
+    # 1) 引用 DOI 解析到同一候选：最强证据，降阈值。
+    if doi_match and doi_match >= 1.0:
+        thr -= profile.w_doi_match
+    # 2) 题名+年份+作者全面一致：降阈值。
+    if title_sim >= 0.9 and year_match >= 1.0 and (author_sim or 0) >= 0.6:
+        thr -= profile.w_full_agree
+    # 3) 多个独立数据源同时返回候选（证据冗余/互补）：降阈值。
+    distinct_sources = len({c.source for c in candidates if c.source})
+    if distinct_sources >= profile.evidence_min_sources:
+        thr -= profile.w_evidence
+    # 4) 非标准文献且题名强匹配：补偿覆盖劣势，适度降阈值。
+    if entry.entry_type and entry.entry_type.lower() in NONSTANDARD_TYPES and title_sim >= 0.85:
+        thr -= profile.w_nonstd
+    # 5) 作者严重不符且无 DOI 佐证：抬高门槛。
+    if author_sim is not None and author_sim < 0.2 and not (doi_match and doi_match >= 1.0):
+        thr += profile.w_author_penalty
+
+    return max(profile.adapt_floor, min(profile.adapt_ceil, thr))
+
 
 def decide(
     entry: BibEntry,
@@ -38,10 +89,15 @@ def decide(
         p2 = max(others) if others else 0.0
     gap = p1 - p2
     issues = []
-    if p1 >= profile.match_threshold:
+    # 自适应档按证据强度计算有效阈值，否则用配置档固定阈值。
+    if profile.adaptive:
+        eff_threshold = adaptive_threshold(profile, entry, candidates, explanations)
+    else:
+        eff_threshold = profile.match_threshold
+    if p1 >= eff_threshold:
         is_match = True
         confidence = p1
-    elif p1 < profile.match_threshold and gap < profile.gap_threshold:
+    elif p1 < eff_threshold and gap < profile.gap_threshold:
         is_match = False
         confidence = p1
         issues.append("top2_gap_small")
@@ -65,7 +121,7 @@ def decide(
         issues=issues,
         source=best_hit.source if best_hit else "none",
         match_probability=p1,
-        decision_profile=str(profile.match_threshold),
+        decision_profile=f"{eff_threshold:.3f}",
         best_hit=best_hit,
         top_hits=candidates[:5],
         explanations=explanations or {},
