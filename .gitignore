@@ -66,6 +66,7 @@ Thumbs.db
 # 数据采集中间产物与生成物（许可核查通过前不入库）
 data/staging/
 data/citation_dataset_final_v4.json
+data/citation_hallucination.json
 data/refguard_input.jsonl
 data/refguard_input_summary.json
 

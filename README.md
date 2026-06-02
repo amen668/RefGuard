@@ -97,8 +97,20 @@ curl -X POST "http://127.0.0.1:8000/api/v1/verify/bib" \
 
 ```bash
 python scripts/build_refguard_input.py
-python eval/run_benchmark.py --input data/refguard_input.jsonl --out eval_report
+# 论文主结果（自适应阈值 + 跨注册商 DOI 内容协商，测试集 n=2037）
+python eval/run_benchmark.py --input data/refguard_input.jsonl --out eval_report_final \
+  --profile adaptive --sources crossref,openalex,arxiv,dblp,semanticscholar,doicn
+# 论文图2 的 DOI 注册商分布（实测，非硬编码）
+python scripts/compute_doi_ra.py            # -> data/doi_ra_distribution.json
+# 论文表/图
+python scripts/run_ablation.py --offline-only
+python scripts/make_paper_tables.py
+python scripts/make_figures.py
 ```
+
+### 数据集公开
+
+完整基准数据默认不入库。如需公开发布，请先阅读 [`data/DATASET_CARD.md`](data/DATASET_CARD.md) 的**伦理声明**与**公开发布清单**，并运行 `scripts/make_public_dataset.py` 生成剥离第三方原始判定字段、注入使用限制的公开版。合成的"幻觉"条目仅为检测负样本，**严禁当作真实文献引用**。
 
 ## 开发检查
 

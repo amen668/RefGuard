@@ -77,6 +77,32 @@ python eval/run_benchmark.py --input data/refguard_input.jsonl --out tmp_eval_ch
 
 运行完整评测时会访问公开元数据接口，请遵守各接口的请求频率、API 条款和引用要求。
 
+## 伦理声明与使用限制（重要）
+
+本数据集包含**人工合成的"幻觉"参考文献**（负样本），其唯一用途是作为引用真实性检测的**基准负例**。
+
+- ⚠️ **合成负样本（500 条，`subset=hallucination_synthetic`）是刻意构造的虚假引用**（篡改题名 / 伪造作者 / 捏造 DOI / 错配 venue/年份 / 完全虚构）。它们**不指向真实文献**，**严禁**被当作真实参考文献引用、转引或写入任何论文的参考文献表。每条均带 `label=hallucination`、`hallucination_type` 与 `note`（构造方法），便于审计。
+- 合成假作者名为占位用途，**不影射任何真实个人**；如发现偶然撞名，请提 issue 移除。
+- 真实样本（`label=real`）仅含公开书目元数据，其"真实"标签由 DOI 经 doi.org 独立解析确立，**不**由 RefGuard 自身判定（避免循环标注）。
+
+## 第三方来源与许可（公开发布前必读）
+
+| 子集 | 来源 | 许可 / 再分发注意 |
+| --- | --- | --- |
+| `hallucination_synthetic`（500）| 本项目由真实引用派生合成 | 可随项目以 CC-BY/CC0 发布；须保留伦理声明 |
+| 真实样本（1937）| Crossref / OpenAlex / arXiv / DBLP（多为 CC0）| 纯书目事实，再分发风险低；注明来源即可 |
+| `hallucination_gptzero`（100）| **第三方 GPTZero 报告**（NeurIPS 2025）| ⚠️ **再分发前须核查 GPTZero 条款**。建议署名并链接其报告；公开版应剥离 `gptzero_comment`（其原始判定文字），可用 `scripts/make_public_dataset.py` 处理 |
+
+## 公开发布清单（release checklist）
+
+正式公开数据集前逐项确认：
+
+1. [ ] 运行 `scripts/make_public_dataset.py` 生成公开版（剥离 `gptzero_comment`、注入伦理声明）。
+2. [ ] 核实 GPTZero 第三方条目的署名与许可；必要时仅保留指针而非原文。
+3. [ ] 确认仅含书目字段，无摘要 / 全文 / 凭据 / cookie / API 原始响应。
+4. [ ] 附本数据卡与 `LICENSE`，明确合成负样本的使用限制。
+5. [ ] 建议**论文录用后**再公开，并在论文"代码与数据可用性"节给出地址。
+
 ## 开源边界
 
 本数据用于个人研究和论文实验复现。公开可访问不等于自动可再分发；如将数据用于论文附件、公开 release 或第三方复用，请再次核查来源许可、API 条款和引用要求。
