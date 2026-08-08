@@ -354,7 +354,12 @@ def main() -> None:
     output_path = Path(args.output)
     summary_path = Path(args.summary)
 
-    rows = json.loads(input_path.read_text(encoding="utf-8"))
+    payload = json.loads(input_path.read_text(encoding="utf-8"))
+    # Public releases wrap records with a top-level ethics/licensing metadata
+    # object; internal curated files remain a plain list for compatibility.
+    rows = payload.get("records", []) if isinstance(payload, dict) else payload
+    if not isinstance(rows, list):
+        raise ValueError("input must be a record list or an object containing a 'records' list")
     excluded_statuses = {clean_text(s) for s in args.exclude_verification_status if clean_text(s)}
     included_rows = [row for row in rows if clean_text(row.get("verification_status")) not in excluded_statuses]
     excluded_rows = [row for row in rows if clean_text(row.get("verification_status")) in excluded_statuses]

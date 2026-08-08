@@ -1,6 +1,8 @@
 # 数据目录
 
-本目录用于放置公开样例、可复现实验记录和数据整理说明。当前基准数据将重新整理，正式源数据和生成产物暂不随仓库保留。
+本目录用于放置公开样例、可复现实验记录和数据整理说明。论文基准的公开版本为
+`citation_dataset_public_v4.json`；逐条预测和最终消融缓存见
+`../paper_results/README.md`。
 
 公开可访问不等于自动可再分发。用于论文附件、公开 release 或第三方复用前，请逐项核查来源许可、API 条款和引用要求。
 
@@ -25,7 +27,8 @@
 
 ## 生成方式
 
-整理完成后，源数据建议命名为 `citation_dataset_final_v4.json` 或后续版本文件。`refguard_input.jsonl` 由源数据自动生成，不手工维护：
+内部源数据命名为 `citation_dataset_final_v4.json`，公开白名单版本由
+`scripts/make_public_dataset.py` 生成。`refguard_input.jsonl` 由源数据自动生成，不手工维护：
 
 ```bash
 python scripts/build_refguard_input.py
