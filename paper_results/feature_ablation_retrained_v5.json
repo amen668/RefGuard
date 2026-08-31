@@ -1,0 +1,117 @@
+{
+  "protocol": "Each feature subset is independently trained by L2 logistic regression and thresholded on the frozen development set; the frozen test subset is used only for final scoring.",
+  "development_features": "paper_results/dev_features_v4.jsonl",
+  "test_cache": "paper_results/ablation_cache_openalex_clean_v4.jsonl",
+  "n_development": 500,
+  "n_test": 500,
+  "rows": [
+    {
+      "feature_combination": "仅 DOI 匹配",
+      "features": [
+        "doi_match",
+        "id_match"
+      ],
+      "development_threshold": 0.982833468,
+      "tp": 110,
+      "fp": 1,
+      "tn": 389,
+      "fn": 0,
+      "recall": 1.0,
+      "precision": 0.990990991,
+      "accuracy": 0.998,
+      "f1": 0.995475113
+    },
+    {
+      "feature_combination": "DOI+标题",
+      "features": [
+        "doi_match",
+        "id_match",
+        "title_sim"
+      ],
+      "development_threshold": 0.983194476,
+      "tp": 110,
+      "fp": 2,
+      "tn": 388,
+      "fn": 0,
+      "recall": 1.0,
+      "precision": 0.982142857,
+      "accuracy": 0.996,
+      "f1": 0.990990991
+    },
+    {
+      "feature_combination": "仅标题相似度",
+      "features": [
+        "title_sim"
+      ],
+      "development_threshold": 0.789719909,
+      "tp": 54,
+      "fp": 0,
+      "tn": 390,
+      "fn": 56,
+      "recall": 0.490909091,
+      "precision": 1.0,
+      "accuracy": 0.888,
+      "f1": 0.658536585
+    },
+    {
+      "feature_combination": "仅作者相似度",
+      "features": [
+        "author_sim"
+      ],
+      "development_threshold": 0.517259022,
+      "tp": 56,
+      "fp": 2,
+      "tn": 388,
+      "fn": 54,
+      "recall": 0.509090909,
+      "precision": 0.965517241,
+      "accuracy": 0.888,
+      "f1": 0.666666667
+    },
+    {
+      "feature_combination": "标题+作者+年份",
+      "features": [
+        "title_sim",
+        "author_sim",
+        "year_match"
+      ],
+      "development_threshold": 0.718114375,
+      "tp": 62,
+      "fp": 0,
+      "tn": 390,
+      "fn": 48,
+      "recall": 0.563636364,
+      "precision": 1.0,
+      "accuracy": 0.904,
+      "f1": 0.720930233
+    },
+    {
+      "feature_combination": "全特征（同协议）",
+      "features": [
+        "title_sim",
+        "author_sim",
+        "year_match",
+        "doi_match",
+        "id_match",
+        "source_prior",
+        "rank_feature",
+        "title_length",
+        "author_count",
+        "has_doi",
+        "has_arxiv_id",
+        "url_match",
+        "venue_sim",
+        "source_score"
+      ],
+      "development_threshold": 0.335473305,
+      "tp": 98,
+      "fp": 0,
+      "tn": 390,
+      "fn": 12,
+      "recall": 0.890909091,
+      "precision": 1.0,
+      "accuracy": 0.976,
+      "f1": 0.942307692
+    }
+  ]
+}

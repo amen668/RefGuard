@@ -99,14 +99,24 @@ curl -X POST "http://127.0.0.1:8000/api/v1/verify/bib" \
 python scripts/build_refguard_input.py
 # 论文主结果（自适应阈值 + 跨注册商 DOI 内容协商，测试集 n=2037）
 python eval/run_benchmark.py --input data/refguard_input.jsonl --out eval_report_final \
-  --profile adaptive --sources crossref,openalex,arxiv,dblp,semanticscholar,doicn
+  --profile adaptive --sources crossref,openalex,arxiv,dblp,semanticscholar,doicn \
+  --model-dir fusion_models_nodoi6 --split test \
+  --split-source data/citation_dataset_final_v4.json
 # 论文图2 的 DOI 注册商分布（实测，非硬编码）
 python scripts/compute_doi_ra.py            # -> data/doi_ra_distribution.json
-# 论文表/图
-python scripts/run_ablation.py --offline-only
+# 论文表4：各特征子集在开发集独立重训和选阈值，再评估冻结测试子集
+python scripts/run_ablation.py --offline-only \
+  --cache paper_results/ablation_cache_openalex_clean_v4.jsonl \
+  --dev-features paper_results/dev_features_v4.jsonl \
+  --ablation-json paper_results/feature_ablation_retrained_v5.json
+# 其他论文表/图
 python scripts/make_paper_tables.py
 python scripts/make_figures.py
 ```
+
+旧版表4脚本仅在推理阶段把特征置零，却继续使用全特征模型的偏置、阈值和部分未遮蔽决策规则，容易使多个组合机械地产生相同结果。修订版对每个特征子集独立重训，并且只用开发集选择阈值；测试标签不参与拟合或选阈值。
+
+OpenAlex 会先执行免费的 DOI 精确查询；精确命中后不再继续付费题名搜索，只有 DOI 缺失或未命中时才回退到题名搜索。若遇到 401、403、429、超时或服务端错误，评测会中止并保留断点，修复凭据或额度后使用 `--resume` 继续，避免把接口故障误记为“无候选”。
 
 ### 数据集公开
 

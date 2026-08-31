@@ -1,6 +1,6 @@
 """数据源抓取器基类。"""
-from abc import ABC
 import time
+from abc import ABC
 from typing import ClassVar
 
 import requests
@@ -11,12 +11,19 @@ from refguard.models import BibEntry, SourceHit
 logger = get_logger(__name__)
 
 
+class FetcherUnavailableError(RuntimeError):
+    """数据源请求失败，当前条目不能被可靠判定。"""
+
+
 class BaseFetcher(ABC):
     """按统一流程查询候选，子类只实现具体数据源逻辑。"""
 
     source_name: ClassVar[str] = ""
     max_results: ClassVar[int] = 10
     user_agent: ClassVar[str] = "RefGuard/1.0"
+    # 对按次计费的数据源，强标识精确命中后无需再执行付费的模糊检索。
+    # 默认关闭，避免改变其他数据源原有的候选召回行为。
+    stop_after_identifier_hit: ClassVar[bool] = False
 
     def __init__(self, *, rate_limit_delay: float = 0.0, timeout: int | None = None) -> None:
         self._last_request_at = 0.0
@@ -33,10 +40,15 @@ class BaseFetcher(ABC):
                 continue
             try:
                 new_hits = hook(query)
-            except Exception as exc:
+            except FetcherUnavailableError:
+                raise
+            except Exception as exc:  # noqa: BLE001 - isolate ordinary source-specific failures
                 logger.debug("%s 查询失败: %s", self.source_name, exc)
                 new_hits = []
-            hits.extend(self._prepare_hits(new_hits, method, query, start_rank=len(hits) + 1))
+            prepared = self._prepare_hits(new_hits, method, query, start_rank=len(hits) + 1)
+            hits.extend(prepared)
+            if self.stop_after_identifier_hit and method in {"doi", "arxiv_id"} and prepared:
+                break
         return hits[: self.max_results]
 
     def _query_plan(self, entry: BibEntry) -> list[tuple[str, str | None, object]]:

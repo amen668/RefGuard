@@ -134,7 +134,9 @@ def main() -> None:
     args = ap.parse_args()
 
     rep = json.loads(Path(args.report).read_text(encoding="utf-8"))
-    results = rep["results"]
+    # A normal benchmark report wraps rows in ``results``; the deterministic
+    # shard merger emits the same rows directly as a JSON list.
+    results = rep if isinstance(rep, list) else rep["results"]
     byid = {r["id"]: r for r in json.loads(Path(args.dataset).read_text(encoding="utf-8"))}
 
     rows = []

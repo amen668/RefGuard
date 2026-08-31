@@ -7,7 +7,7 @@
 阶段1（打 API，可断点续）：检索 + 取特征 → fusion_models_nodoi6/ablation_cache.jsonl
 阶段2（离线）：从缓存导出
   - 表3 单源检索对比（每个数据源单独 + 全融合）
-  - 表4 特征消融（仅DOI/仅标题/仅作者/组合）
+  - 表4 特征消融（每个特征子集在开发集重新训练并选阈值）
   - 表8 运行效率（每条检索耗时统计 + 二次缓存命中加速）
 
 用法：
@@ -18,21 +18,21 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
 
 import numpy as np
-import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from eval.benchmark_utils import record_to_bibtex  # noqa: E402
-from refguard.parsers.bib_parser import BibParser  # noqa: E402
-from refguard.retrieval.candidate_generator import CandidateGenerator  # noqa: E402
-from refguard.fusion.feature_builder import FeatureBuilder, FEATURE_NAMES  # noqa: E402
-from refguard.fusion.fusion_model import FusionModel  # noqa: E402
-from refguard.fusion.decision_engine import adaptive_threshold, NONSTANDARD_TYPES  # noqa: E402
-from refguard.config import get_profile  # noqa: E402
-from refguard.core import setup_logging  # noqa: E402
+from eval.benchmark_utils import record_to_bibtex
+from refguard.config import get_profile
+from refguard.core import setup_logging
+from refguard.fusion.decision_engine import adaptive_threshold
+from refguard.fusion.feature_builder import FEATURE_NAMES, FeatureBuilder
+from refguard.fusion.fusion_model import FusionModel
+from refguard.parsers.bib_parser import BibParser
+from refguard.retrieval.candidate_generator import CandidateGenerator
 
 IDX = {n: i for i, n in enumerate(FEATURE_NAMES)}
 
@@ -116,6 +116,90 @@ def _metrics(tp, tn, fp, fn):
     return acc, pr, rc, f1, fpr
 
 
+def _train_logreg(X: np.ndarray, y: np.ndarray, l2: float = 1.0,
+                  lr: float = 0.2, iters: int = 5000):
+    """与主模型相同的纯 NumPy L2 逻辑回归。"""
+    n, d = X.shape
+    w = np.zeros(d, dtype=np.float64)
+    b = 0.0
+    for _ in range(iters):
+        z = X @ w + b
+        p = 1.0 / (1.0 + np.exp(-np.clip(z, -30, 30)))
+        w -= lr * (X.T @ (p - y) / n + l2 * w / n)
+        b -= lr * float(np.sum(p - y) / n)
+    return w, b
+
+
+def _hallucination_metrics(preds: np.ndarray, real_labels: np.ndarray):
+    """以幻觉为正类返回 TP/TN/FP/FN 及常用指标。"""
+    tp = int(np.sum(preds & ~real_labels))
+    tn = int(np.sum(~preds & real_labels))
+    fp = int(np.sum(preds & real_labels))
+    fn = int(np.sum(~preds & ~real_labels))
+    return (tp, tn, fp, fn), _metrics(tp, tn, fp, fn)
+
+
+def _choose_dev_threshold(match_probs: np.ndarray, real_labels: np.ndarray) -> float:
+    """仅在开发集选 F1 最优阈值；并列时依次偏向召回、精确率和较小阈值。"""
+    best = None
+    for threshold in np.unique(np.r_[0.0, match_probs, 1.0]):
+        preds = match_probs < threshold
+        _, metrics = _hallucination_metrics(preds, real_labels)
+        key = (metrics[3], metrics[2], metrics[1], -float(threshold))
+        if best is None or key > best[0]:
+            best = (key, float(threshold))
+    return best[1]
+
+
+def feature_ablation_rows(recs: list[dict], dev_rows: list[dict]) -> list[dict]:
+    """按标准消融协议独立训练各子集，禁止沿用全模型偏置/阈值。
+
+    开发集只用于拟合和选择阈值；冻结测试缓存只用于一次最终计分。无候选
+    条目保持系统定义，直接判为幻觉。该协议避免旧实现中“置零特征但继续
+    使用全特征模型偏置、阈值及未遮蔽决策规则”造成的机械重复结果。
+    """
+    x_dev_all = np.asarray([row["x"] for row in dev_rows], dtype=np.float64)
+    dev_real = np.asarray([row["label"] == "real" for row in dev_rows], dtype=bool)
+    test_real = np.asarray([row["label"] == "real" for row in recs], dtype=bool)
+    combos = {
+        "仅 DOI 匹配": ["doi_match", "id_match"],
+        "DOI+标题": ["doi_match", "id_match", "title_sim"],
+        "仅标题相似度": ["title_sim"],
+        "仅作者相似度": ["author_sim"],
+        "标题+作者+年份": ["title_sim", "author_sim", "year_match"],
+        "全特征（同协议）": FEATURE_NAMES,
+    }
+    rows = []
+    for name, keep in combos.items():
+        cols = [IDX[item] for item in keep]
+        x_dev = x_dev_all[:, cols]
+        weights, bias = _train_logreg(x_dev, dev_real.astype(np.float64))
+        dev_probs = 1.0 / (1.0 + np.exp(-np.clip(x_dev @ weights + bias, -30, 30)))
+        threshold = _choose_dev_threshold(dev_probs, dev_real)
+
+        test_probs = []
+        for rec in recs:
+            if not rec["hits"]:
+                test_probs.append(-1.0)
+                continue
+            x_test = np.asarray(
+                [[hit["fv"][col] for col in cols] for hit in rec["hits"]],
+                dtype=np.float64,
+            )
+            probs = 1.0 / (1.0 + np.exp(-np.clip(x_test @ weights + bias, -30, 30)))
+            test_probs.append(float(np.max(probs)))
+        preds = np.asarray(test_probs) < threshold
+        confusion, metrics = _hallucination_metrics(preds, test_real)
+        rows.append({
+            "name": name,
+            "features": keep,
+            "threshold": threshold,
+            "confusion": confusion,
+            "metrics": metrics,
+        })
+    return rows
+
+
 def _decide_record(rec, model, profile, source_filter=None, feature_mask=None):
     """对一条缓存记录，按筛选/掩码计算 pred_halluc。"""
     hits = rec["hits"]
@@ -150,19 +234,21 @@ def _decide_record(rec, model, profile, source_filter=None, feature_mask=None):
     return not is_match
 
 
-def export_tables(cache_path: Path, model_dir: str, profile_name: str, out: Path):
+def export_tables(cache_path: Path, model_dir: str, profile_name: str,
+                  dev_features_path: Path, out: Path,
+                  ablation_json: Path | None = None):
     recs = [json.loads(l) for l in cache_path.read_text(encoding="utf-8").splitlines() if l.strip()]
     labels = [1 if r["label"] == "real" else 0 for r in recs]
     model = FusionModel(model_dir=model_dir)
     profile = get_profile(profile_name)
     sources = sorted({h["source"] for r in recs for h in r["hits"]})
 
-    md = ["# 表3/4/8 数据（子集 n=%d，profile=%s）\n" % (len(recs), profile_name)]
+    md = [f"# 表3/4/8 数据（子集 n={len(recs)}，profile={profile_name}）\n"]
 
     # 表3 单源对比（仅列单源；全融合性能见主结果表2，避免子集与全量两个数冲突）
     md.append("## 表3 单源检索性能对比\n")
-    md.append("> 注：本表为 n=%d 测试子集。各源单独使用时性能；RefGuard 全融合性能"
-              "见表2（全量 n=2037：召回 100%%、精确率 98.7%%、F1 0.994）。\n" % len(recs))
+    md.append(f"> 注：本表为 n={len(recs)} 测试子集。各源单独使用时性能；RefGuard 全融合性能"
+              "见表2（全量 n=2037：召回 100%、精确率 98.7%、F1 0.994）。\n")
     md.append("| 数据源 | TP | FP | TN | FN | 召回率 | 精确率 | 准确率 | F1 | FPR |")
     md.append("|--|--:|--:|--:|--:|--:|--:|--:|--:|--:|")
     full_rc = None
@@ -177,26 +263,21 @@ def export_tables(cache_path: Path, model_dir: str, profile_name: str, out: Path
               "**100.0%** | **98.7%** | **99.7%** | **0.994** | 0.4% |")
     md.append("")
 
-    # 表4 特征消融
+    # 表4 特征消融。旧实现仅在推理时置零特征，却沿用全模型偏置、固定阈值
+    # 和未遮蔽的自适应规则，因而多个组合机械地得到相同结果。这里对每个
+    # 子集在开发集独立重训并选阈值，测试子集只用于最终计分。
+    dev_rows = [json.loads(l) for l in dev_features_path.read_text(encoding="utf-8").splitlines()
+                if l.strip()]
     md.append("## 表4 特征消融\n")
-    md.append("| 特征组合 | TP | FP | TN | FN | 召回率 | 精确率 | 准确率 | F1 |")
-    md.append("|--|--:|--:|--:|--:|--:|--:|--:|--:|")
-    combos = {
-        "仅 DOI 匹配": ["doi_match", "id_match"],
-        "仅标题相似度": ["title_sim"],
-        "仅作者相似度": ["author_sim"],
-        "DOI+标题": ["doi_match", "id_match", "title_sim"],
-        "标题+作者+年份": ["title_sim", "author_sim", "year_match"],
-        "全特征（RefGuard）": FEATURE_NAMES,
-    }
-    for name, keep in combos.items():
-        mask = np.zeros(len(FEATURE_NAMES))
-        for k in keep:
-            mask[IDX[k]] = 1.0
-        preds = [_decide_record(r, model, profile, feature_mask=mask) for r in recs]
-        t = _confusion(preds, labels)
-        m = _metrics(*t)
-        md.append(f"| {name} | {t[0]} | {t[2]} | {t[1]} | {t[3]} | "
+    md.append("> 协议：各特征子集在冻结开发集独立训练逻辑回归并选择阈值，"
+              "在同一冻结测试子集上评估；测试标签不参与拟合或选阈值。\n")
+    md.append("| 特征组合 | 开发集阈值 | TP | FP | TN | FN | 召回率 | 精确率 | 准确率 | F1 |")
+    md.append("|--|--:|--:|--:|--:|--:|--:|--:|--:|--:|")
+    ablation_rows = feature_ablation_rows(recs, dev_rows)
+    for row in ablation_rows:
+        tp, tn, fp, fn = row["confusion"]
+        m = row["metrics"]
+        md.append(f"| {row['name']} | {row['threshold']:.6f} | {tp} | {fp} | {tn} | {fn} | "
                   f"{m[2]*100:.1f}% | {m[1]*100:.1f}% | {m[0]*100:.1f}% | {m[3]:.3f} |")
     md.append("")
 
@@ -215,6 +296,39 @@ def export_tables(cache_path: Path, model_dir: str, profile_name: str, out: Path
 
     out.write_text("\n".join(md), encoding="utf-8")
     print(f"已写入 {out}")
+    if ablation_json is not None:
+        payload = {
+            "protocol": (
+                "Each feature subset is independently trained by L2 logistic regression "
+                "and thresholded on the frozen development set; the frozen test subset "
+                "is used only for final scoring."
+            ),
+            "development_features": str(dev_features_path).replace("\\", "/"),
+            "test_cache": str(cache_path).replace("\\", "/"),
+            "n_development": len(dev_rows),
+            "n_test": len(recs),
+            "rows": [
+                {
+                    "feature_combination": row["name"],
+                    "features": row["features"],
+                    "development_threshold": round(row["threshold"], 9),
+                    "tp": row["confusion"][0],
+                    "fp": row["confusion"][2],
+                    "tn": row["confusion"][1],
+                    "fn": row["confusion"][3],
+                    "recall": round(row["metrics"][2], 9),
+                    "precision": round(row["metrics"][1], 9),
+                    "accuracy": round(row["metrics"][0], 9),
+                    "f1": round(row["metrics"][3], 9),
+                }
+                for row in ablation_rows
+            ],
+        }
+        ablation_json.parent.mkdir(parents=True, exist_ok=True)
+        ablation_json.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"已写入 {ablation_json}")
     if full_rc is not None:
         print(f"全融合召回率 {full_rc*100:.1f}%")
 
@@ -229,7 +343,11 @@ def main():
     ap.add_argument("--limit", type=int, default=500)
     ap.add_argument("--seed", type=int, default=20260601)
     ap.add_argument("--cache", default="fusion_models_nodoi6/ablation_cache.jsonl")
+    ap.add_argument("--dev-features", default="fusion_models_nodoi6/dev_features.jsonl",
+                    help="冻结开发集最佳候选特征，用于各特征子集独立训练和选阈值")
     ap.add_argument("--out", default="paper_tables_ablation.md")
+    ap.add_argument("--ablation-json", default=None,
+                    help="可选：另存结构化特征消融结果 JSON")
     ap.add_argument("--offline-only", action="store_true")
     args = ap.parse_args()
     try:
@@ -239,7 +357,9 @@ def main():
     cache_path = Path(args.cache)
     if not args.offline_only:
         build_cache(args, cache_path)
-    export_tables(cache_path, args.model_dir, args.profile, Path(args.out))
+    export_tables(cache_path, args.model_dir, args.profile,
+                  Path(args.dev_features), Path(args.out),
+                  Path(args.ablation_json) if args.ablation_json else None)
 
 
 if __name__ == "__main__":

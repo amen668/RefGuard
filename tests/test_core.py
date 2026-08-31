@@ -1,6 +1,9 @@
 import unittest
+from unittest.mock import Mock, patch
 
 from refguard.config import get_profile
+from refguard.fetchers import OpenAlexFetcher
+from refguard.fetchers.base import FetcherUnavailableError
 from refguard.fusion.decision_engine import decide
 from refguard.fusion.feature_builder import FeatureBuilder
 from refguard.models import BibEntry, EntryReport, SourceHit, resolve_report_status
@@ -130,6 +133,106 @@ class 服务编排测试(unittest.TestCase):
 
         self.assertEqual(candidates, [])
         self.assertEqual(per_source["unknown"], 0)
+
+
+class OpenAlex费用控制测试(unittest.TestCase):
+    @staticmethod
+    def _entry(doi: str = "10.1234/demo") -> BibEntry:
+        return BibEntry(
+            key="demo",
+            entry_type="article",
+            title="A Small Test Paper",
+            author="Zhang, San",
+            authors=["Zhang, San"],
+            year="2024",
+            doi=doi,
+        )
+
+    @staticmethod
+    def _hit(doi: str = "10.1234/demo") -> SourceHit:
+        return SourceHit(
+            source="openalex",
+            confidence_raw=0.9,
+            retrieval_method="",
+            query="",
+            rank=0,
+            fetched_title="A Small Test Paper",
+            fetched_authors=["Zhang, San"],
+            fetched_year="2024",
+            fetched_doi=doi,
+        )
+
+    def test_doi_命中后不再执行收费题名搜索(self):
+        fetcher = OpenAlexFetcher(api_key="")
+        with (
+            patch.object(fetcher, "lookup_by_doi", return_value=[self._hit()]) as doi_lookup,
+            patch.object(fetcher, "search_by_title", return_value=[self._hit()]) as title_search,
+        ):
+            hits = fetcher.search(self._entry())
+
+        doi_lookup.assert_called_once_with("10.1234/demo")
+        title_search.assert_not_called()
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0].retrieval_method, "doi")
+
+    def test_doi_无命中时仍回退到题名搜索(self):
+        fetcher = OpenAlexFetcher(api_key="")
+        with (
+            patch.object(fetcher, "lookup_by_doi", return_value=[]) as doi_lookup,
+            patch.object(fetcher, "search_by_title", return_value=[self._hit(doi="")]) as title_search,
+        ):
+            hits = fetcher.search(self._entry())
+
+        doi_lookup.assert_called_once_with("10.1234/demo")
+        title_search.assert_called_once_with("A Small Test Paper")
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0].retrieval_method, "title_search")
+
+    def test_openalex_不可用时不会被静默转换为空候选(self):
+        fetcher = OpenAlexFetcher(api_key="")
+        with patch.object(
+            fetcher,
+            "lookup_by_doi",
+            side_effect=FetcherUnavailableError("OpenAlex unavailable: HTTP 429"),
+        ), self.assertRaises(FetcherUnavailableError):
+            fetcher.search(self._entry())
+
+    def test_题名含问号时在请求前移除通配符(self):
+        fetcher = OpenAlexFetcher(api_key="")
+        response = Mock()
+        response.raise_for_status.return_value = None
+        response.json.return_value = {"results": []}
+        with (
+            patch.object(fetcher, "_wait"),
+            patch.object(fetcher._session, "get", return_value=response) as request,
+        ):
+            fetcher.search_by_title("Can machine learning improve delta hedging?")
+
+        self.assertEqual(
+            request.call_args.kwargs["params"],
+            {"search": "Can machine learning improve delta hedging", "per-page": 5},
+        )
+
+    def test_题名中的双重转义_html_和孤立星号会被清理(self):
+        title = "追踪研究 &amp;lt;sup&amp;gt;*&amp;lt;/sup&amp;gt;"
+        self.assertEqual(OpenAlexFetcher._clean_search_title(title), "追踪研究")
+
+    def test_清理后为空的题名不发起收费请求(self):
+        fetcher = OpenAlexFetcher(api_key="")
+        with patch.object(fetcher._session, "get") as request:
+            self.assertEqual(fetcher.search_by_title("<sup>*?</sup>"), [])
+        request.assert_not_called()
+
+    def test_候选生成器遇到数据源不可用时中止(self):
+        generator = CandidateGenerator(["openalex"], top_k=3)
+        fetcher = OpenAlexFetcher(api_key="")
+        generator._fetchers["openalex"] = fetcher
+        with patch.object(
+            fetcher,
+            "lookup_by_doi",
+            side_effect=FetcherUnavailableError("OpenAlex unavailable: HTTP 429"),
+        ), self.assertRaises(FetcherUnavailableError):
+            generator.generate(self._entry())
 
 
 if __name__ == "__main__":

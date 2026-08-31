@@ -1,8 +1,9 @@
 """多数据源候选生成。"""
 
-from refguard.models import BibEntry, SourceHit
-from refguard.fetchers import get_fetcher
 from refguard.core import get_logger
+from refguard.fetchers import get_fetcher
+from refguard.fetchers.base import FetcherUnavailableError
+from refguard.models import BibEntry, SourceHit
 
 logger = get_logger(__name__)
 
@@ -37,12 +38,15 @@ class CandidateGenerator:
                 continue
             try:
                 hits = fetcher.search(entry)
-            except Exception as exc:
+            except FetcherUnavailableError:
+                # 研究评测不能把数据源故障等同于“无文献命中”。向上抛出以保留
+                # 已写断点并停止本次运行，待额度/网络恢复后再续跑。
+                raise
+            except Exception as exc:  # noqa: BLE001 - isolate ordinary source-specific failures
                 logger.debug("数据源 %s 查询异常: %s", src, exc)
                 hits = []
             per_source[src] = len(hits)
-            for h in hits:
-                all_hits.append(h)
+            all_hits.extend(hits)
         seen = set()
         unique = []
         for h in all_hits:

@@ -14,6 +14,10 @@ full-text papers, raw API responses, or private user data.
   0.9971, hallucination precision 0.9874, recall 1.0000, and F1 0.9937.
 - `ablation_cache_openalex_clean_v4.jsonl`: deduplicated 500-record cache used
   for the final six-source ablation, including OpenAlex evidence.
+- `dev_features_v4.jsonl`: frozen best-candidate feature vectors for the 500
+  development records used to fit and threshold each feature subset.
+- `feature_ablation_retrained_v5.json`: structured output of the corrected
+  feature-ablation protocol and the six reported rows.
 
 ## Ablation version note
 
@@ -29,6 +33,16 @@ The manuscript's description of the six-source system corresponds to the final
 clean cache. The full-test result in `eval_report_v4.json` is unaffected by this
 table-version note.
 
+The original feature-ablation implementation masked columns only at inference
+time while retaining the full model's intercept, threshold, and some unmasked
+decision rules. That protocol made several feature combinations collapse to
+identical predictions. The corrected protocol independently fits each feature
+subset on the frozen development vectors, selects its threshold on that
+development set only, and then scores the frozen 500-record test cache once.
+The row named `全特征（同协议）` is the full feature set under this controlled
+ablation protocol; it is not a replacement for the deployed RefGuard result in
+the 2,037-record main test.
+
 ## Recompute the ablation table
 
 From the repository root:
@@ -42,7 +56,9 @@ python scripts/build_refguard_input.py \
 python scripts/run_ablation.py \
   --offline-only \
   --cache paper_results/ablation_cache_openalex_clean_v4.jsonl \
-  --out paper_tables_ablation_reproduced.md
+  --dev-features paper_results/dev_features_v4.jsonl \
+  --out paper_tables_ablation_reproduced.md \
+  --ablation-json feature_ablation_reproduced.json
 ```
 
 The benchmark evaluation uses live public scholarly-metadata endpoints. Exact
@@ -52,7 +68,9 @@ per-record report and feature cache preserve the paper-time evidence.
 ## SHA-256
 
 ```text
-f7c2b8a3d980ee1bfc35bf8966f8cdd5d4d758a77db2942843edb8e57e59378f  data/citation_dataset_public_v4.json
-19716f225c83dbcfac48cf94d478f0267b42585dac330cd035e4a310b7ef76e7  paper_results/eval_report_v4.json
-fadce748a23b2029b374bbb9a64b33cb4d2f2e06b6f03c813fad46807e70bb4b  paper_results/ablation_cache_openalex_clean_v4.jsonl
+c43319ccbaee863db87b250f3a3249234ee500ffb58ff2236a3bd12e2da738a7  data/citation_dataset_public_v4.json
+179cd59284c42e37a686a7cff045c6ead1b7fb0b188ff7d5b5683e0d3f6f66c4  paper_results/eval_report_v4.json
+1ffe0b4c8c1c81f1286e1ddd9b9e431b6d07dc864f872e597bdd87b11508bfed  paper_results/ablation_cache_openalex_clean_v4.jsonl
+f5e5112c6cb55bf1f30ee481d73b4993fc513f728fc1ab637d4f03a02cdde0be  paper_results/dev_features_v4.jsonl
+b65e578c83732e66579ab0cf10a3dfa90696decf7af4ce55f0b0a6732053dce7  paper_results/feature_ablation_retrained_v5.json
 ```
