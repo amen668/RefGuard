@@ -1,5 +1,7 @@
 """多数据源候选生成。"""
 
+from concurrent.futures import ThreadPoolExecutor
+
 from refguard.core import get_logger
 from refguard.fetchers import get_fetcher
 from refguard.fetchers.base import FetcherUnavailableError
@@ -26,16 +28,21 @@ class CandidateGenerator:
         return self._fetchers[name]
 
     def generate(self, entry: BibEntry) -> tuple[list[SourceHit], dict[str, int]]:
-        """返回候选列表和每个数据源的命中数。"""
+        """并行查询各数据源，按配置顺序合并候选并返回命中数。"""
         all_hits: list[SourceHit] = []
         per_source: dict[str, int] = {}
 
+        active: list[tuple[str, object]] = []
         for src in self.sources:
             fetcher = self._get_fetcher(src)
             if fetcher is None:
                 logger.debug("跳过未知数据源: %s", src)
                 per_source[src] = 0
                 continue
+            active.append((src, fetcher))
+
+        def fetch_one(item: tuple[str, object]) -> tuple[str, list[SourceHit]]:
+            src, fetcher = item
             try:
                 hits = fetcher.search(entry)
             except FetcherUnavailableError:
@@ -45,8 +52,17 @@ class CandidateGenerator:
             except Exception as exc:  # noqa: BLE001 - isolate ordinary source-specific failures
                 logger.debug("数据源 %s 查询异常: %s", src, exc)
                 hits = []
-            per_source[src] = len(hits)
-            all_hits.extend(hits)
+            return src, hits
+
+        # executor.map 按提交顺序返回结果，保证并行化前后的候选优先级一致。
+        if active:
+            with ThreadPoolExecutor(
+                max_workers=len(active), thread_name_prefix="refguard-source"
+            ) as pool:
+                results = pool.map(fetch_one, active)
+                for src, hits in results:
+                    per_source[src] = len(hits)
+                    all_hits.extend(hits)
         seen = set()
         unique = []
         for h in all_hits:
