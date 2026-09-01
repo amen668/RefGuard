@@ -1,8 +1,17 @@
 # 数据目录
 
-本目录用于放置公开样例、可复现实验记录和数据整理说明。论文基准的公开版本为
-`citation_dataset_public_v4.json`；逐条预测和最终消融缓存见
-`../paper_results/README.md`。
+本目录用于放置公开样例、可复现实验记录和数据整理说明。
+
+- `citation_dataset_public_v4.json`：录用稿结果的冻结历史快照，不静默覆盖；
+- `citation_dataset_public_v5_core.json`：28条书目修正后的公开核心集，排除未获
+  再分发许可的100条GPTZero第三方记录；
+- `corrections_v5.json`：V4到V5的逐字段审计修正清单；
+- `verification_provenance_v5.json`：2,437条可公开记录的逐条身份核验状态；
+- `correction_report_v5.json`：生成哈希、数量和结果边界校验；
+- `VERSION_HISTORY.md`：两版用途及不可混用说明。
+
+录用稿逐条预测和最终消融缓存见 `../paper_results/README.md`，它们仍属于V4结果，
+不得标记为V5复评结果。
 
 公开可访问不等于自动可再分发。用于论文附件、公开 release 或第三方复用前，请逐项核查来源许可、API 条款和引用要求。
 

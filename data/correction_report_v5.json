@@ -1,0 +1,64 @@
+{
+  "status": "post_acceptance_data_correction",
+  "paper_results_replaced": false,
+  "frozen_v4_sha256": "c43319ccbaee863db87b250f3a3249234ee500ffb58ff2236a3bd12e2da738a7",
+  "corrections_sha256": "7cfea1250379fbca9f06b6ce94252677aff7c70618644a2d3c71cb12c41cc3ec",
+  "verification_provenance_sha256": "7004917179e39ba0f8f51f40ecc0f1ddd578306130dc07309ea1902ddba19ee9",
+  "corrected_records": 28,
+  "verification_provenance_records": 2437,
+  "corrected_record_ids": [
+    "R-TP-EN-00031",
+    "R-TP-EN-00151",
+    "R-TP-EN-00177",
+    "R-TP-EN-00262",
+    "R-TP-ZH-00360",
+    "R-O-EN-00433",
+    "R-O-ZH-00469",
+    "R-R-EN-00618",
+    "R-T-ZH-00849",
+    "R-T-ZH-00891",
+    "R-P-ZH-01048",
+    "R-G-ZH-01148",
+    "R-R-EN-01508",
+    "R-F-EN-01527",
+    "R-TP-EN-01548",
+    "R-TP-EN-01558",
+    "R-TP-EN-01559",
+    "R-TP-EN-01568",
+    "R-TP-EN-01572",
+    "R-TP-EN-01576",
+    "R-TP-EN-01589",
+    "R-TP-EN-01591",
+    "R-TP-EN-01593",
+    "R-TP-EN-01594",
+    "R-TP-EN-01605",
+    "R-O-EN-01623",
+    "R-O-EN-01632",
+    "R-X-EN-01826"
+  ],
+  "full_corrected_internal_summary": {
+    "total": 2537,
+    "labels": {
+      "real": 1937,
+      "hallucination": 600
+    },
+    "splits": {
+      "test": 2037,
+      "dev": 500
+    },
+    "nonempty_doi": 2035,
+    "cross_split_normalized_title_groups": 14,
+    "cross_split_normalized_title_author_groups": 7
+  },
+  "public_v5_core": {
+    "path": "data/citation_dataset_public_v5_core.json",
+    "sha256": "a121d9fbf757861245ff4daafb2f93fbe66213c04790fce481f5ff8407e7c755",
+    "total": 2437,
+    "labels": {
+      "real": 1937,
+      "hallucination": 500
+    },
+    "gptzero_records_distributed": 0
+  },
+  "result_boundary": "V5 数据未用于录用稿冻结指标；如报告 V5 指标，必须另行完成并标记复评。"
+}

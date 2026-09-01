@@ -1,0 +1,594 @@
+{
+  "frozen_tag": "paper-v5-frozen-20260901",
+  "records_changed": 28,
+  "changes": [
+    {
+      "id": "R-TP-EN-00031",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "AI-Assisted Pipeline for Dynamic Generation of Trustworthy Health Supplement Content at Scale",
+          "after": "Qualitative Spatial Reasoning over Questions (Short Paper)"
+        },
+        "authors": {
+          "before": "Holter, Ole Magnus and Ell, Basil",
+          "after": "Mohammad Kazemi Beydokhti and Matt Duckham and Yaguang Tao and Maria Vasardani and Amy Griffin"
+        },
+        "year": {
+          "before": "2018",
+          "after": "2022"
+        },
+        "venue": {
+          "before": "DROPS (Schloss Dagstuhl – Leibniz Center for Informatics)",
+          "after": "LIPIcs, Volume 240, COSIT 2022"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-00151",
+      "split": "test",
+      "changes": {
+        "authors": {
+          "before": "Max Born and Emil Wolf and A. B. Bhatia and P. C. Clemmow and D. Gabor and A. R. Stokes and A. M. Taylor and P. A. Wayman and W. L. Wilcock",
+          "after": "Max Born and Emil Wolf"
+        },
+        "year": {
+          "before": "1999",
+          "after": "2019"
+        },
+        "venue": {
+          "before": "Cambridge University Press eBooks",
+          "after": "Cambridge University Press"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-00177",
+      "split": "dev",
+      "changes": {
+        "title": {
+          "before": "HISTORIAE, History of Socio-Cultural Transformation as Linguistic Data Science. A Humanities Use Case",
+          "after": "Transformer-Based Feature Learning for Algorithm Selection in Combinatorial Optimisation"
+        },
+        "authors": {
+          "before": "Yinhan Liu and Myle Ott and Arora, Ravneet and Jingfei Du",
+          "after": "Alessio Pellegrino and Özgür Akgün and Nguyen Dang and Zeynep Kiziltan and Ian Miguel"
+        },
+        "year": {
+          "before": "2019",
+          "after": "2025"
+        },
+        "venue": {
+          "before": "DROPS (Schloss Dagstuhl – Leibniz Center for Informatics)",
+          "after": "LIPIcs, Volume 340, CP 2025"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-00262",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Aion Framework: Dimensional Emergence of AI Consciousness, Observer-Induced Collapse, and Cosmological Portal Dynamics",
+          "after": "Evaluating the Effectiveness of Large Language Models in Representing Textual Descriptions of Geometry and Spatial Relations (Short Paper)"
+        },
+        "authors": {
+          "before": "T. B. Brown and Gao, Song",
+          "after": "Yuhan Ji and Song Gao"
+        },
+        "venue": {
+          "before": "DROPS (Schloss Dagstuhl – Leibniz Center for Informatics)",
+          "after": "LIPIcs, Volume 277, GIScience 2023"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-ZH-00360",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Review on Knowledge Graph Techniques",
+          "after": "知识图谱技术综述"
+        },
+        "authors": {
+          "before": "Zenglin Xu and Yongpan Sheng and HE Li-rong and Yafang Wang",
+          "after": "徐增林"
+        }
+      }
+    },
+    {
+      "id": "R-O-EN-00433",
+      "split": "test",
+      "changes": {
+        "authors": {
+          "before": "Mark A. Bradford",
+          "after": "Marion M. Bradford"
+        }
+      }
+    },
+    {
+      "id": "R-O-ZH-00469",
+      "split": "test",
+      "changes": {
+        "authors": {
+          "before": "Anay Luketa-Hanlin",
+          "after": "A LUKETAHANLIN"
+        },
+        "year": {
+          "before": "2005",
+          "after": "2006"
+        }
+      }
+    },
+    {
+      "id": "R-R-EN-00618",
+      "split": "test",
+      "changes": {
+        "doi": {
+          "before": "10.1515/9781400883882?locatt=mode:legacy",
+          "after": "10.1515/9781400883882"
+        },
+        "url": {
+          "before": "https://doi.org/10.1515/9781400883882?locatt=mode:legacy",
+          "after": "https://doi.org/10.1515/9781400883882"
+        }
+      }
+    },
+    {
+      "id": "R-T-ZH-00849",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "[Expert consensus for diagnosis and treatment of Fabry disease in China (2021)].",
+          "after": "中国法布雷病诊疗专家共识（2021年版）"
+        },
+        "authors": {
+          "before": "Geoff Dean",
+          "after": "Chinese Fabry Disease Expert Panel"
+        },
+        "venue": {
+          "before": "Faculty of Law",
+          "after": "中华内科杂志"
+        }
+      }
+    },
+    {
+      "id": "R-T-ZH-00891",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "高Fe、Cr含量多相Ni 3 Al基高温合金组织与性能研究进展",
+          "after": "高Fe、Cr含量多相Ni3Al基高温合金组织与性能研究进展"
+        },
+        "authors": {
+          "before": "Wu Di Jing and 刘永长 and 李冲 and 伍宇婷 and 夏兴川 and 李会军 and Jing Wu and Yongchang Liu and Chong Li and Yuting Wu and Xingchuan Xia and Huijun Li",
+          "after": "吴静"
+        },
+        "year": {
+          "before": "2019",
+          "after": "2020"
+        },
+        "venue": {
+          "before": "Acta Metallurgica Sinica",
+          "after": "金属学报"
+        }
+      }
+    },
+    {
+      "id": "R-P-ZH-01048",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "植物葉の重なり, 厚さ, 水分量が分光反射特性に及ぼす影響",
+          "after": "The Effects of Overlapping, Thickness and Water Content of Plant Leaves in Spectral Reflectance."
+        },
+        "authors": {
+          "before": "Haruhiko Yamamoto and Yoshinori Suzuki and Seiji Hayakawa",
+          "after": "晴彦 山本 and 義則 鈴木 and 誠而 早川"
+        },
+        "venue": {
+          "before": "National Remote Sensing Bulletin",
+          "after": "日本リモートセンシング学会誌"
+        }
+      }
+    },
+    {
+      "id": "R-G-ZH-01148",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "科技教育融入STEM 課程的核心價值與實踐 Core Value and Implementation of the Science, Technology, Engineering, and Mathematics Curriculum in Technology Education",
+          "after": "科技教育融入STEM課程的核心價值與實踐"
+        },
+        "authors": {
+          "before": "Szu Chun Fan and Kuang Chao Yu",
+          "after": "范斯淳 and 游光昭"
+        },
+        "venue": {
+          "before": "DOAJ (DOAJ: Directory of Open Access Journals)",
+          "after": "教育科學研究期刊"
+        }
+      }
+    },
+    {
+      "id": "R-R-EN-01508",
+      "split": "test",
+      "changes": {
+        "doi": {
+          "before": "10.1016/j.toxicon.2005.12.010",
+          "after": ""
+        },
+        "url": {
+          "before": "https://doi.org/10.1016/j.toxicon.2005.12.010",
+          "after": "https://www.ijcai.org/Proceedings/89-2/Papers/033.pdf"
+        }
+      }
+    },
+    {
+      "id": "R-F-EN-01527",
+      "split": "test",
+      "changes": {
+        "doi": {
+          "before": "10.1016/0020-7519(95)00001-i",
+          "after": ""
+        },
+        "url": {
+          "before": "https://doi.org/10.1016/0020-7519(95)00001-i",
+          "after": "https://aclanthology.org/E12-2021/"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01548",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Diagnosing Non-Intermittent Anomalies in Reinforcement Learning Policy Executions (Short Paper)",
+          "after": "Quantifying the Sim-To-Real Gap in UAV Disturbance Rejection"
+        },
+        "authors": {
+          "before": "Natan, Avraham and Stern, Roni and Kalech, Meir",
+          "after": "Austin Coursey and Marcos Quinones-Grueiro and Gautam Biswas"
+        },
+        "year": {
+          "before": "2017",
+          "after": "2024"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "OASIcs, Volume 125, DX 2024"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01558",
+      "split": "test",
+      "changes": {
+        "year": {
+          "before": "2016",
+          "after": "2017"
+        },
+        "venue": {
+          "before": "Figshare",
+          "after": "Zenodo"
+        },
+        "doi": {
+          "before": "10.5281/zenodo.1318390",
+          "after": "10.5281/zenodo.1318399"
+        },
+        "url": {
+          "before": "https://doi.org/10.5281/zenodo.1318390",
+          "after": "https://doi.org/10.5281/zenodo.1318399"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01559",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter",
+          "after": "LLM-Supported Manufacturing Mapping Generation"
+        },
+        "authors": {
+          "before": "Victor Sanh and Lysandre Debut and Julien Chaumond and Thomas Wolf",
+          "after": "Wilma Johanna Schmidt and Irlan Grangel-González and Adrian Paschke and Evgeny Kharlamov"
+        },
+        "year": {
+          "before": "2019",
+          "after": "2025"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "Transactions on Graph Data and Knowledge (TGDK)"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "journal"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01568",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Bidirectional LSTM-CRF Models for Sequence Tagging",
+          "after": "NER in Archival Finding Aids"
+        },
+        "authors": {
+          "before": "Zhiheng Huang and Xu, Wei and Kai Yu",
+          "after": "Luís Filipe Costa Cunha and José Carlos Ramalho"
+        },
+        "year": {
+          "before": "2015",
+          "after": "2021"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "OASIcs, Volume 94, SLATE 2021"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01572",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Generating Sequences With Recurrent Neural Networks",
+          "after": "LOL: An Investigation into Cybernetic Humor, or: Can Machines Laugh?"
+        },
+        "authors": {
+          "before": "Loli Piccolomini, Elena and Gandolfi, Stefano and Poluzzi, Luca and Tavasci, Luca and Cascarano, Pasquale and Pascucci, Andrea",
+          "after": "Davide Bacciu and Vincenzo Gervasi and Giuseppe Prencipe"
+        },
+        "year": {
+          "before": "2013",
+          "after": "2016"
+        },
+        "venue": {
+          "before": "DROPS (Schloss Dagstuhl – Leibniz Center for Informatics)",
+          "after": "LIPIcs, Volume 49, FUN 2016"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01576",
+      "split": "test",
+      "changes": {
+        "authors": {
+          "before": "Patrick Lewis and Ethan Perez and Aleksandara Piktus and Fabio Petroni and Vladimir Karpukhin and Naman Goyal and Heinrich Küttler and Mike Lewis and Wen-tau Yih and Tim Rocktäschel and Sebastian Riedel and Douwe Kiela",
+          "after": "K Takahashi"
+        },
+        "year": {
+          "before": "2025",
+          "after": "2026"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "Zenodo"
+        },
+        "doi": {
+          "before": "10.5281/zenodo.17518571",
+          "after": "10.5281/zenodo.20116149"
+        },
+        "url": {
+          "before": "https://doi.org/10.5281/zenodo.17518571",
+          "after": "https://doi.org/10.5281/zenodo.20116149"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01589",
+      "split": "test",
+      "changes": {
+        "authors": {
+          "before": "Alexei Baevski and Henry Zhou and Abdelrahman Mohamed and Michael Auli",
+          "after": "Jianchang Su and Yifan Zhang and Wei Zhang"
+        },
+        "year": {
+          "before": "2020",
+          "after": "2026"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "OASIcs, Volume 139, NINeS 2026"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01591",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Relational inductive biases, deep learning, and graph networks",
+          "after": "Understanding the Impact of Value Selection Heuristics in Scheduling Problems"
+        },
+        "authors": {
+          "before": "Battaglia, Peter W. and Hamrick, Jessica B. and Bapst, Victor and Álvaro Sánchez‐González and Vinícius Zambaldi and Mateusz Malinowski and Andrea Tacchetti and David Raposo and Adam Santoro and Ryan Faulkner and Çağlar Gülçehre and H. Francis Song and Andrew J. Ballard and Justin Gilmer and George E. Dahl and Ashish Vaswani and Kelsey R. Allen and C. Nash and Victoria Langston and Chris Dyer and Nicolas Heess and Daan Wierstra and Pushmeet Kohli and Matthew Botvinick and Oriol Vinyals and Yujia Li and Razvan Pascanu",
+          "after": "Tim Luchterhand and Emmanuel Hebrard and Sylvie Thiébaux"
+        },
+        "year": {
+          "before": "2018",
+          "after": "2025"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "LIPIcs, Volume 340, CP 2025"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01593",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Microsoft COCO: Common Objects in Context",
+          "after": "Wayfinding Stages: The Role of Familiarity, Gaze Events, and Visual Attention"
+        },
+        "authors": {
+          "before": "Lin, Tsung-Yi and Maire, Michael and Belongie, Serge and Bourdev, Lubomir and Girshick, Ross and Hays, James and Perona, Pietro and Ramanan, Deva and Zitnick, C. Lawrence and Dollár, Piotr",
+          "after": "Negar Alinaghi and Ioannis Giannopoulos"
+        },
+        "year": {
+          "before": "2014",
+          "after": "2024"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "LIPIcs, Volume 315, COSIT 2024"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01594",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "GPT-4 Technical Report",
+          "after": "Semantic Perspectives on the Lake District Writing: Spatial Ontology Modeling and Relation Extraction for Deeper Insights"
+        },
+        "authors": {
+          "before": "Wijegunarathna, Kalana and Stock, Kristin and Jones, Christopher B.",
+          "after": "Erum Haris and Anthony G. Cohn and John G. Stell"
+        },
+        "year": {
+          "before": "2023",
+          "after": "2024"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "LIPIcs, Volume 315, COSIT 2024"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-TP-EN-01605",
+      "split": "test",
+      "changes": {
+        "title": {
+          "before": "Embedding Entities and Relations for Learning and Inference in Knowledge Bases",
+          "after": "Rule Learning over Knowledge Graphs: A Review"
+        },
+        "authors": {
+          "before": "d'Amato, Claudia and Wen-tau Yih and Monnin, Pierre and Stamou, Giorgos",
+          "after": "Hong Wu and Zhe Wang and Kewen Wang and Pouya Ghiasnezhad Omran and Jiangmeng Li"
+        },
+        "year": {
+          "before": "2014",
+          "after": "2023"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "Transactions on Graph Data and Knowledge (TGDK)"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "journal"
+        }
+      }
+    },
+    {
+      "id": "R-O-EN-01623",
+      "split": "dev",
+      "changes": {
+        "title": {
+          "before": "Agnostic Learning with Unknown Utilities",
+          "after": "Safe Reinforcement Learning Using Probabilistic Shields (Invited Paper)"
+        },
+        "authors": {
+          "before": "Davis, Matthew A.",
+          "after": "Nils Jansen and Bettina Könighofer and Sebastian Junges and Alex Serban and Roderick Bloem"
+        },
+        "year": {
+          "before": "2016",
+          "after": "2020"
+        },
+        "venue": {
+          "before": "arXiv (Cornell University)",
+          "after": "LIPIcs, Volume 171, CONCUR 2020"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "conference"
+        }
+      }
+    },
+    {
+      "id": "R-O-EN-01632",
+      "split": "test",
+      "changes": {
+        "authors": {
+          "before": "Brown, AGA and A. Vallenari and T. Prusti and de Bruijne, JHJ and F. Mignard and R. Drimmel and Babusiaux, C and Bailer-Jones, CAL and Bastian, U and Biermann, M and Evans, DW and Eyer, L and Jansen, F and Jordi, C and Katz, D and Klioner, SA and Lammers, U and Lindegren, L and Luri, X and O’Mullane, W and Panem, C and Pourbaix, D and Randich, S and Sartoretti, P and Siddiqui, HI and Soubiran, C and Valette, V and van Leeuwen, F and Walton, NA and Aerts, C and Arenou, F and Cropper, M and Høg, E and Lattanzi, MG and Grebel, EK and Holland, AD and Huc, C and Passot, X and Perryman, M and Bramante, L and Cacciari, C and Castañeda, J and Chaoul, L and Cheek, N and De Angeli, F and Fabricius, C and Guerra, R and Hernández, J and Jean-Antoine-Piccolo, A and Masana, E and Messineo, R and Mowlavi, N and Nienartowicz, K and Ordóñez-Blanco, D and Panuzzo, P and Portell, J and Richards, PJ and Riello, M and Seabroke, GM and Tanga, P and Thévenin, F and Torra, J and Els, SG and Gracia-Abril, G and Comoretto, G and Garcia-Reinaldos, M and Lock, T and Mercier, E and Altmann, M and Andrae, R and Astraatmadja, TL and Bellas-Velidis, I and Benson, K and Berthier, J and Blomme, R and Busso, G and Carry, B and Cellino, A and Clementini, G and Cowell, S and Creevey, O and Cuypers, J and Davidson, M and De Ridder, J and de Torres, A and Delchambre, L and Dell’Oro, A and Ducourant, C and Frémat, Y and García-Torres, M and Gosset, E and Halbwachs, J-L and Hambly, NC and Harrison, DL and Hauser, M and Hestroffer, D and Hodgkin, ST and Huckle, HE and Hutton, A and Jasniewicz, G",
+          "after": "AGA Brown and A Vallenari and T Prusti and JHJ de Bruijne and F Mignard and R Drimmel and C Babusiaux and CAL Bailer-Jones and U Bastian and M Biermann and DW Evans and L Eyer and F Jansen and C Jordi and D Katz and SA Klioner and U Lammers and L Lindegren and X Luri and W O’Mullane and C Panem and D Pourbaix and S Randich and P Sartoretti and HI Siddiqui and C Soubiran and V Valette and F van Leeuwen and NA Walton and C Aerts and F Arenou and M Cropper and E Høg and MG Lattanzi and EK Grebel and AD Holland and C Huc and X Passot and M Perryman and L Bramante and C Cacciari and J Castañeda and L Chaoul and N Cheek and F De Angeli and C Fabricius and R Guerra and J Hernández and A Jean-Antoine-Piccolo and E Masana and R Messineo and N Mowlavi and K Nienartowicz and D Ordóñez-Blanco and P Panuzzo and J Portell and PJ Richards and M Riello and GM Seabroke and P Tanga and F Thévenin and J Torra and SG Els and G Gracia-Abril and G Comoretto and M Garcia-Reinaldos and T Lock and E Mercier and M Altmann and R Andrae and TL Astraatmadja and I Bellas-Velidis and K Benson and J Berthier and R Blomme and G Busso and B Carry and A Cellino and G Clementini and S Cowell and O Creevey and J Cuypers and M Davidson and J De Ridder and A de Torres and L Delchambre and A Dell’Oro and C Ducourant and Y Frémat and M García-Torres and E Gosset and J-L Halbwachs and NC Hambly and DL Harrison and M Hauser and D Hestroffer and ST Hodgkin and HE Huckle and A Hutton and G Jasniewicz and S Jordan and M Kontizas and AJ Korn and AC Lanzafame and M Manteiga and A Moitinho and K Muinonen and J Osinde and E Pancino and T Pauwels and J-M Petit and A Recio-Blanco and AC Robin and LM Sarro and C Siopis and M Smith and KW Smith and A Sozzetti and W Thuillot and W van Reeven and Y Viala and U Abbas and A Abreu Aramburu and S Accart and JJ Aguado and PM Allan and W Allasia and G Altavilla and MA Álvarez and J Alves and RI Anderson and AH Andrei and E Anglada Varela and E Antiche and T Antoja and S Antón and B Arcay and N Bach and SG Baker and L Balaguer-Núñez and C Barache and C Barata and A Barbier and F Barblan and D Barrado y Navascués and M Barros and MA Barstow and U Becciani and M Bellazzini and A Bello García and V Belokurov and P Bendjoya and A Berihuete and L Bianchi and O Bienaymé and F Billebaud and N Blagorodnova and S Blanco-Cuaresma and T Boch and A Bombrun and R Borrachero and S Bouquillon and G Bourda and H Bouy and A Bragaglia and MA Breddels and N Brouillet and T Brüsemeister and B Bucciarelli and P Burgess and R Burgon and A Burlacu and D Busonero and R Buzzi and E Caffau and J Cambras and H Campbell and R Cancelliere and T Cantat-Gaudin and T Carlucci and JM Carrasco and M Castellani and P Charlot and J Charnas and A Chiavassa and M Clotet and G Cocozza and RS Collins and G Costigan and F Crifo and NJG Cross and M Crosta and C Crowley and C Dafonte and Y Damerdji and A Dapergolas and P David and M David and P De Cat and F de Felice and P de Laverny and F De Luise and R De March and D de Martino and R de Souza and J Debosscher and E del Pozo and M Delbo and A Delgado and HE Delgado and P Di Matteo and S Diakite and E Distefano and C Dolding and S Dos Anjos and P Drazinos and J Duran and Y Dzigan and B Edvardsson and H Enke and NW Evans and G Eynard Bontemps and C Fabre and M Fabrizio and S Faigler and AJ Falcão and M Farràs Casas and L Federici and G Fedorets and J Fernández-Hernández and P Fernique and A Fienga and F Figueras and F Filippi and K Findeisen and A Fonti and M Fouesneau and E Fraile and M Fraser and J Fuchs and M Gai and S Galleti and L Galluccio and D Garabato and F García-Sedano and A Garofalo and N Garralda and P Gavras and J Gerssen and R Geyer and G Gilmore and S Girona and G Giuffrida and M Gomes and A González-Marcos and J González-Núñez and JJ González-Vidal and M Granvik and A Guerrier and P Guillout and J Guiraud and A Gúrpide and R Gutiérrez-Sánchez and LP Guy and R Haigron and D Hatzidimitriou and M Haywood and U Heiter and A Helmi and D Hobbs and W Hofmann and B Holl and G Holland and JAS Hunt and A Hypki and V Icardi and M Irwin and G Jevardat de Fombelle and P Jofré and PG Jonker and A Jorissen and F Julbe and A Karampelas and A Kochoska and R Kohley and K Kolenberg and E Kontizas and SE Koposov and G Kordopatis and P Koubsky and A Krone-Martins and M Kudryashova and I Kull and RK Bachchan and F Lacoste-Seris and AF Lanza and J-B Lavigne and C Le Poncin-Lafitte and Y Lebreton and T Lebzelter and S Leccia and N Leclerc and I Lecoeur-Taibi and V Lemaitre and H Lenhardt and F Leroux and S Liao and E Licata and HEP Lindstrøm and TA Lister and E Livanou and A Lobel and W Löffler and M López and D Lorenz and I MacDonald and T Magalhães Fernandes and S Managau and RG Mann and G Mantelet and O Marchal and JM Marchant and M Marconi and S Marinoni and PM Marrese and G Marschalkó and DJ Marshall and JM Martín-Fleitas and M Martino and N Mary and G Matijevič and T Mazeh and PJ McMillan and S Messina and D Michalik and NR Millar and BMH Miranda and D Molina and R Molinaro and M Molinaro and L Molnár and M Moniez and P Montegriffo and R Mor and A Mora and R Morbidelli and T Morel and S Morgenthaler and D Morris and AF Mulone and T Muraveva and I Musella and J Narbonne and G Nelemans and L Nicastro and L Noval and C Ordénovic and J Ordieres-Meré and P Osborne and C Pagani and I Pagano and F Pailler and H Palacin and L Palaversa and P Parsons and M Pecoraro and R Pedrosa and H Pentikäinen and B Pichon and AM Piersimoni and F-X Pineau and E Plachy and G Plum and E Poujoulet and A Prša and L Pulone and S Ragaini and S Rago and N Rambaux and M Ramos-Lerate and P Ranalli and G Rauw and A Read and S Regibo and C Reylé and RA Ribeiro and L Rimoldini and V Ripepi and A Riva and G Rixon and M Roelens and M Romero-Gómez and N Rowell and F Royer and L Ruiz-Dern and G Sadowski and T Sagristà Sellés and J Sahlmann and J Salgado and E Salguero and M Sarasso and H Savietto and M Schultheis and E Sciacca and M Segol and JC Segovia and D Segransan and I-C Shih and R Smareglia and RL Smart and E Solano and F Solitro and R Sordo and S Soria Nieto and J Souchay and A Spagna and F Spoto and U Stampa and IA Steele and H Steidelmüller and CA Stephenson and H Stoev and FF Suess and M Süveges and J Surdej and L Szabados and E Szegedi-Elek and D Tapiador and F Taris and G Tauran and MB Taylor and R Teixeira and D Terrett and B Tingley and SC Trager and C Turon and A Ulla and E Utrilla and G Valentini and A van Elteren and E Van Hemelryck and M van Leeuwen and M Varadi and A Vecchiato and J Veljanoski and T Via and D Vicente and S Vogt and H Voss and V Votruba and S Voutsinas and G Walmsley and M Weiler and K Weingrill and T Wevers and Ł Wyrzykowski and A Yoldas and M Žerjal and S Zucker and C Zurbach and T Zwitter and A Alecu and M Allen and C Allende Prieto and A Amorim and G Anglada-Escudé and V Arsenijevic and S Azaz and P Balm and M Beck and H-H Bernstein and L Bigot and A Bijaoui and C Blasco and M Bonfigli and G Bono and S Boudreault and A Bressan and S Brown and P-M Brunet and P Bunclark and R Buonanno and AG Butkevich and C Carret and C Carrion and L Chemin and F Chéreau and L Corcione and E Darmigny and KS de Boer and P de Teodoro and PT de Zeeuw and C Delle Luche and CD Domingues and P Dubath and F Fodor and B Frézouls and A Fries and D Fustes and D Fyfe and E Gallardo and J Gallegos and D Gardiol and M Gebran and A Gomboc and A Gómez and E Grux and A Gueguen and A Heyrovsky and J Hoar and G Iannicola and Y Isasi Parache and A-M Janotto and E Joliet and A Jonckheere and R Keil and D-W Kim and P Klagyivik and J Klar and J Knude and O Kochukhov and I Kolka and J Kos and A Kutka and V Lainey and D LeBouquin and C Liu and D Loreggia and Makarov and MG Marseille and C Martayan and O Martinez-Rubi and B Massart and F Meynadier and S Mignot and U Munari and A-T Nguyen and T Nordlander and P Ocvirk and KS O’Flaherty and A Olias Sanz and P Ortiz and J Osorio and D Oszkiewicz and A Ouzounis and M Palmer and P Park and E Pasquato and C Peltzer and J Peralta and F Péturaud and T Pieniluoma and E Pigozzi and J Poels and G Prat and T Prod’homme and F Raison and JM Rebordao and D Risquez and B Rocca-Volmerange and S Rosen and MI Ruiz-Fuertes and F Russo and S Sembay and I Serraller Vizcaino and A Short and A Siebert and H Silva and D Sinachopoulos and E Slezak and M Soffel and D Sosnowska and V Straižys and M ter Linden and D Terrell and S Theil and C Tiede and L Troisi and P Tsalmantza and D Tur and M Vaccari and F Vachier and P Valles and W Van Hamme and L Veltz and J Virtanen and J-M Wallut and R Wichmann and MI Wilkinson and H Ziaeepour and S Zschocke"
+        },
+        "year": {
+          "before": "2016",
+          "after": "2019"
+        },
+        "venue": {
+          "before": "Repository of the Academy's Library (Library of the Hungarian Academy of Sciences)",
+          "after": "EDP Sciences"
+        },
+        "doc_type": {
+          "before": "preprint",
+          "after": "journal"
+        }
+      }
+    },
+    {
+      "id": "R-X-EN-01826",
+      "split": "test",
+      "changes": {
+        "doi": {
+          "before": "10.21953/10.21953/lse.9t1vm73ug29o",
+          "after": "10.21953/lse.9t1vm73ug29o"
+        },
+        "url": {
+          "before": "https://doi.org/10.21953/10.21953/lse.9t1vm73ug29o",
+          "after": "https://doi.org/10.21953/lse.9t1vm73ug29o"
+        }
+      }
+    }
+  ]
+}

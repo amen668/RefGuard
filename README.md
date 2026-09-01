@@ -87,6 +87,20 @@ curl -X POST "http://127.0.0.1:8000/api/v1/verify/bib" \
 
 ## 实验数据
 
+论文数据采用明确的版本边界：V4 是录用稿结果的不可变历史快照；V5 是录用后
+书目身份校正版，二者不得混用或静默覆盖。由于尚未取得 GPTZero 第三方数据的
+再分发许可，公开 V5 核心集不包含该 100 条子集。完整说明见
+[`data/VERSION_HISTORY.md`](data/VERSION_HISTORY.md)。
+
+生成校正公开核心集：
+
+```bash
+python scripts/build_corrected_v5.py
+```
+
+该命令只修正数据和生成版本清单，不修改 RefGuard 的检索、特征融合或决策算法，
+也不会把 V5 结果写成录用稿指标。
+
 当前基准数据将重新整理。整理完成后，源数据应放在 `data/citation_dataset_final_v4.json` 或后续版本文件中，`data/refguard_input.jsonl` 由 `scripts/build_refguard_input.py` 生成。
 
 当前项目数据来自公开来源和公开元数据。请将其视为研究数据：只保留书目信息、标签与来源说明。不要提交论文全文、用户上传文件、非公开数据源导出、API key 或 cookie。正式公开完整数据集前，请单独附数据说明和许可核查结果。

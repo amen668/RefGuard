@@ -1,5 +1,12 @@
 # RefGuard 基准数据卡
 
+> **版本提示（2026-09-01）**：`citation_dataset_public_v4.json` 是录用稿结果的
+> 冻结历史快照，不再静默改写。录用后书目身份校正版为
+> `citation_dataset_public_v5_core.json`，由 `corrections_v5.json` 确定性生成。
+> 因尚未取得 GPTZero 第三方数据的再分发许可，公开 V5 核心集排除了该100条
+> 子集，规模为2,437条；因此V5不能直接复现录用稿的2,537条结果。版本边界见
+> `VERSION_HISTORY.md`。
+
 ## 基本信息
 
 `refguard_input.jsonl` 是 RefGuard 的论文实验基准数据，由源数据 `data/citation_dataset_final_v4.json` 通过 `scripts/build_refguard_input.py` 生成。数据文件本身按 `.gitignore` 不入库，由下述脚本可复现重建。
@@ -97,11 +104,11 @@ python eval/run_benchmark.py --input data/refguard_input.jsonl --out tmp_eval_ch
 
 正式公开数据集前逐项确认：
 
-1. [ ] 运行 `scripts/make_public_dataset.py` 生成公开版（剥离 `gptzero_comment`、注入伦理声明）。
-2. [ ] 核实 GPTZero 第三方条目的署名与许可；必要时仅保留指针而非原文。
+1. [ ] 运行 `scripts/build_corrected_v5.py` 生成公开校正核心集及校验报告。
+2. [ ] 确认公开产物中 `hallucination_gptzero` 记录数为0；未获许可前不得恢复。
 3. [ ] 确认仅含书目字段，无摘要 / 全文 / 凭据 / cookie / API 原始响应。
 4. [ ] 附本数据卡与 `LICENSE`，明确合成负样本的使用限制。
-5. [ ] 建议**论文录用后**再公开，并在论文"代码与数据可用性"节给出地址。
+5. [ ] 在Release说明中同时给出V4冻结哈希、V5校正哈希及二者结果不可混用的声明。
 
 ## 开源边界
 

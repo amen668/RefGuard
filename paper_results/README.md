@@ -1,5 +1,10 @@
 # Paper reproducibility package
 
+> Version boundary: every result in this directory belongs to the frozen V4
+> manuscript snapshot. The post-acceptance corrected V5 core dataset does not
+> replace these files, and no V5 metric is claimed here. See
+> `../data/VERSION_HISTORY.md` and `../data/correction_report_v5.json`.
+
 This directory contains the smallest data package needed to audit the principal
 results reported for RefGuard. It does not contain API credentials, cookies,
 full-text papers, raw API responses, or private user data.
